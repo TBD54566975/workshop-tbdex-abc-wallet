@@ -9,7 +9,7 @@ type SetQuoteAmountFormProps = {
 }
 
 /**
- * This component represents a form for setting the quote amount for a remittance.
+ * This component represents a form for setting the quote amount for an exchange.
  *
  * @param {Function} props.onNext - A function to proceed to the next step.
  * @returns {JSX.Element} - Returns the SetQuoteAmountForm component.

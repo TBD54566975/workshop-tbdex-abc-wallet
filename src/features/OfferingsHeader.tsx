@@ -1,9 +1,9 @@
 /**
- * This component represents a header section for remittance information.
+ * This component represents a header section for offerings information.
  *
- * @returns {JSX.Element} - Returns the RemittanceHeader component.
+ * @returns {JSX.Element} - Returns the OfferingsHeader component.
  */
-export function RemittanceHeader() {
+export function OfferingsHeader() {
   return (
     <div className="flex flex-col items-center">
       <div className='pl-6 pt-4 text-center'>Offerings</div>

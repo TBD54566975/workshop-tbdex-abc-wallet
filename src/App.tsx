@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { RootPage } from './features/RootPage'
 import { ActivityPage } from './features/ActivityPage'
-import { RemittancePage } from './features/RemittancePage'
+import { OfferingsPage } from './features/OfferingsPage'
 import { useEffect } from 'react'
 import { DidKeyMethod } from '@web5/dids'
 
@@ -17,8 +17,8 @@ const router = createBrowserRouter([
         element: <ActivityPage />,
       },
       {
-        path: '/remittance',
-        element: <RemittancePage />,
+        path: '/offerings',
+        element: <OfferingsPage />,
       },
     ],
   },

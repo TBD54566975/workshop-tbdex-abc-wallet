@@ -62,7 +62,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
                       {props.exchange.firstName.charAt(0).toUpperCase()}
                     </div>
                     <p className="text-sm font-semibold text-white">{props.exchange.firstName} {props.exchange.lastName}</p>
-                    <p className="text-xs text-gray-500 mt-1">Remittance from {props.exchange.amounts.quoteCurrency} to {props.exchange.amounts.baseCurrency}</p>
+                    <p className="text-xs text-gray-500 mt-1">Exchange from {props.exchange.amounts.quoteCurrency} to {props.exchange.amounts.baseCurrency}</p>
                     <div className="mt-8 mb-1 text-3xl font-semibold text-gray-200">
                       {props.exchange.amounts.quoteCurrency === 'BTC'
                         ? removeTrailingZeros(BTC(props.exchange.amounts.quote).format())

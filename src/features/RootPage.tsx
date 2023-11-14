@@ -14,7 +14,7 @@ const navigation = [
   },
   {
     name: 'Exchange',
-    link: '/remittance',
+    link: '/offerings',
     icon: ArrowsUpDownIcon,
   },
 ]

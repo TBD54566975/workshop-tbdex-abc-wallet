@@ -7,12 +7,12 @@ import { Flag } from '../common/Flag.tsx'
 import { Spinner } from '../common/Spinner.tsx'
 
 /**
- * This component displays a list of remittance offerings for different countries.
- * Users can click on a country to view more details and initiate a remittance request.
+ * This component displays a list of exchange offerings for different countries.
+ * Users can click on a country to view more details and initiate an exchange request.
  *
- * @returns {JSX.Element} - Returns the RemittanceOfferings component.
+ * @returns {JSX.Element} - Returns the Offerings component.
  */
-export function RemittanceOfferings() {
+export function Offerings() {
   const [offerings, setOfferings] = useState()
   const [rfqModalOpen, setRfqModalOpen] = useState(false)
   const [selectedCountry, setSelectedCountry] = useState()
@@ -35,7 +35,7 @@ export function RemittanceOfferings() {
     if (hasSubmitted) {
       navigate('/')
     } else {
-      navigate('/remittance', { state: { selectedCountry } }) // TODO: is this right?
+      navigate('/offerings', { state: { selectedCountry } }) // TODO: is this right?
     }
   }
 

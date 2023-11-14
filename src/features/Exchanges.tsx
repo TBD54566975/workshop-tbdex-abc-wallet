@@ -94,7 +94,7 @@ export function Exchanges() {
         {!exchanges || exchanges?.length === 0 ? (
           <div className="min-w-0 truncate text-center pl-3">
             <p className="text-xs font-medium leading-6 text-neutral-100 mt-3">No transactions found</p>
-            <p className="truncate text-xs leading-5 text-gray-500">Request a remittance.</p>
+            <p className="truncate text-xs leading-5 text-gray-500">Request an exchange.</p>
           </div>
         ) : (
           exchanges?.map((exchange) => (

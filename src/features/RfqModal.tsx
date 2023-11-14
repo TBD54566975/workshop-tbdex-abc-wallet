@@ -17,7 +17,7 @@ type RfqModalProps = {
 }
 
 /**
- * This component represents the RFQ (Request for Quote) modal for entering remittance details.
+ * This component represents the RFQ (Request for Quote) modal for entering exchange details.
  *
  * @param {string} props.country - The selected country.
  * @param {boolean} props.isOpen - A boolean indicating whether the modal is open.
