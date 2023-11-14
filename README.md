@@ -11,6 +11,9 @@ npm install tailwindcss
 ```
 
 ## Running the Project
+
+[![Edit in CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/github/TBD54566975/workshop-tbdex-abc-wallet/)
+
 To run the project in development mode, run the following:
 
 ```bash
