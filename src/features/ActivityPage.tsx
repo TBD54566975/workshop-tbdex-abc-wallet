@@ -15,7 +15,7 @@ export function ActivityPage() {
 
   useEffect(() => {
     const init = async () => {
-      setAccountBalance(101)
+      setAccountBalance(105)
     }
     init()
   }, [])
@@ -26,7 +26,7 @@ export function ActivityPage() {
     <>
       <Panel width={'w-11/12'} height={'h-auto'}>
         <button className="w-full rounded-md bg-transparent px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-neutral-700 hover:bg-neutral-700/30">
-          <div className="mt-2 text-sm font-semibold text-gray-200">Cash Balance</div>
+          <div className="mt-2 text-sm font-semibold text-gray-200">TBDollars Balance</div>
           <div className="mt-2 mb-3 text-3xl font-semibold text-gray-200">{USD(accountBalance).format()}</div>
         </button>
       </Panel>
