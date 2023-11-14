@@ -1,14 +1,4 @@
-## Tailwind CSS
-This project utilizes Tailwind CSS for styling. Before running the project you must first run the following in the `frontend` directory:
-
-```bash
-npx tailwindcss -i ./src/styles/index.css -o ../../dist/output.css --watch
-```
-
-If not found, npm install first:
-```bash
-npm install tailwindcss
-```
+## tbDEX ABC Wallet Workshop
 
 ## Running the Project
 
