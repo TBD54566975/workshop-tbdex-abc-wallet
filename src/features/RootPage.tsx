@@ -13,7 +13,7 @@ const navigation = [
     icon: ClockIcon,
   },
   {
-    name: 'Remittance',
+    name: 'Exchange',
     link: '/remittance',
     icon: ArrowsUpDownIcon,
   },
