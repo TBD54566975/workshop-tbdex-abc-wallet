@@ -1,0 +1,48 @@
+:root {
+  --react-international-phone-country-selector-background-color: transparent;
+  --react-international-phone-background-color: rgba(23, 23, 23, 1);
+  --react-international-phone-country-selector-background-color-hover: transparent;
+  --react-international-phone-disabled-country-selector-background-color: transparent;
+  --react-international-phone-country-selector-border-color: transparent;
+  --react-international-phone-country-selector-arrow-size: transparent;
+  --react-international-phone-country-selector-arrow-color: transparent;
+  --react-international-phone-disabled-country-selector-arrow-color: transparent;
+  --react-international-phone-dropdown-item-text-color: white;
+  --react-international-phone-selected-dropdown-item-text-color: white;
+  --react-international-phone-dropdown-item-font-size: 11px;
+  --react-international-phone-selected-dropdown-item-background-color: transparent;
+  --react-international-phone-focused-dropdown-item-background-color: transparent;
+}
+
+.custom-phone-input {
+  background: transparent;
+}
+
+.custom-phone-input input {
+  background: transparent;
+  border: none;
+}
+
+.custom-phone-input input:focus {
+  outline: none;
+  box-shadow: none !important;
+}
+
+.custom-phone-input .CountrySelector {
+  background: transparent;
+}
+
+.custom-phone-input .DialCodePreview {
+  background: transparent;
+}
+
+.CountrySelector {
+  width: 10px;
+}
+
+* {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 0.375rem;
+}
