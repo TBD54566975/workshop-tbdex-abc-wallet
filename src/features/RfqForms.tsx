@@ -6,7 +6,6 @@ import { SetQuoteAmountForm } from './SetQuoteAmountForm'
 import { RecipientDobForm } from './RecipientDobForm'
 import { PayoutMethodForm } from './PayoutMethodForm'
 import { ReviewForm } from './ReviewForm'
-import { ALLOWED_BANKS, ALLOWED_MOMO } from '../payout-allowlist'
 import { useContext } from 'react'
 import { RfqContext } from './RfqContext'
 
@@ -69,9 +68,8 @@ export const getRfqForms = (offering, country, handleNext, handleBack) => {
     }
   ]
 
-  const isBank = offering.payoutMethods.some(
-    (method) => ALLOWED_BANKS.includes(method.kind)
-  )
+  // TODO: add actual logic
+  const isBank = false
 
   if (isBank && payoutMethod) {
     forms.push({
@@ -93,9 +91,8 @@ export const getRfqForms = (offering, country, handleNext, handleBack) => {
     })
   }
 
-  const isMomo = offering.payoutMethods.find(
-    (method) => ALLOWED_MOMO.includes(method.kind)
-  )
+  // TODO: add actual logic
+  const isMomo = true
 
   if (isMomo && payoutMethod) {
     forms.push({

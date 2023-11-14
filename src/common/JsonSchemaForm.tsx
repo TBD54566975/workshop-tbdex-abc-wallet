@@ -3,7 +3,6 @@ import { ThemeProps, withTheme } from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
 import { FieldProps, RegistryFieldsType } from '@rjsf/utils'
 import { Dropdown } from './Dropdown'
-import { paymentReasons } from '../payment-reasons'
 import { PhoneInput } from 'react-international-phone'
 import 'react-international-phone/style.css'
 import '../styles/phone.css'
@@ -37,7 +36,8 @@ class StringFieldTemplate extends React.Component<FieldProps> {
         <div key={this.props.name} className='mt-4 mb-2'>
           {isReason ? (
             <div className='text-sm'>
-              <Dropdown items={paymentReasons} selectedItem={this.props.formData} setSelectedItem={(event) => this.props.onChange(event)} label={'Select a reason'} labelKind='label'/>
+              // TODO: add items to dropdown
+              <Dropdown items={''} selectedItem={this.props.formData} setSelectedItem={(event) => this.props.onChange(event)} label={'Select a reason'} labelKind='label'/>
             </div>
           ) : (
             isPhoneNumber ? (

@@ -3,7 +3,6 @@ import { RfqContext } from './RfqContext'
 import { Dropdown } from '../common/Dropdown'
 import { NextButton } from '../common/NextButton'
 import { fromCents } from '../currency-utils'
-import { ALLOWED_MOMO } from '../payout-allowlist'
 
 type PayoutMethodFormProps = {
   payoutMethods: undefined

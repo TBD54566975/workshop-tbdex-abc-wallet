@@ -7,8 +7,6 @@ import { getSubunits } from '../currency-utils'
 import { BackButton } from '../common/BackButton'
 import { Panel } from '../common/Panel'
 import { Flag } from '../common/Flag'
-import { populateRfq } from '../rfq-utils'
-import { ALLOWED_BANKS } from '../payout-allowlist'
 import dayjs from 'dayjs'
 import '../styles/date.css'
 
