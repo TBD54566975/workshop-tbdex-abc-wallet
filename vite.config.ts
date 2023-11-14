@@ -11,7 +11,7 @@ export default defineConfig({
     port: 8081,
     proxy: {
       '/api': {
-        target: process.env.DIDPAY_BACKEND_URL || 'http://localhost:8080',
+        target: 'http://localhost:8080',
       }
     },
   },

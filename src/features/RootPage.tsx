@@ -117,7 +117,7 @@ export function RootPage() {
                         onClick={() => handleSidebarItemClick(-1)}
                         style={{ fontSize: '22px' }}
                       >
-                        <div>DIDPay</div>
+                        <div>ABC Wallet</div>
                       </Link>
                       <img
                         className="h-8 w-auto"
@@ -180,7 +180,7 @@ export function RootPage() {
                     filter: 'var(--color-primary-yellow-filter)',
                   }}
                 >
-                  DIDPay
+                  ABC Wallet
                 </div>
               </Link>
               <img
