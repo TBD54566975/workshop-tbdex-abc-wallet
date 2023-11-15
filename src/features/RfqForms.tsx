@@ -3,13 +3,8 @@ import { PayinPage } from './PayinPage'
 import { ReviewPage } from './ReviewPage'
 
 export enum RfqFormIds {
-  SetQuoteAmount = 'setQuoteAmount',
-  RecipientName = 'recipientName',
-  RecipientDob = 'recipientDob',
-  RecipientCountry = 'recipientCountry',
-  PayoutMethod = 'payoutMethod',
-  RecipientBank = 'recipientBank',
-  RecipientMomo = 'recipientMomo',
+  Payin = 'payin',
+  BtcAddress = 'btcAddress',
   Review = 'review',
 }
 
@@ -28,7 +23,7 @@ export const getRfqForms = (offering, handleNext, handleBack) => {
       component: (
         <PayinPage onNext={handleNext} />
       ),
-      id: RfqFormIds.SetQuoteAmount
+      id: RfqFormIds.Payin
     },
     {
       title: 'What\'s your BTC address?',
@@ -39,7 +34,7 @@ export const getRfqForms = (offering, handleNext, handleBack) => {
           onNext={handleNext}
         />
       ),
-      id: RfqFormIds.RecipientBank
+      id: RfqFormIds.BtcAddress
     },
     {
       title: 'Review your request',

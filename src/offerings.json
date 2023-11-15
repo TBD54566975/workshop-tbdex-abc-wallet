@@ -2,8 +2,8 @@
   {
     "description": "TBDollars to BTC",
     "payoutUnitsPerPayinUnit": "0.000028",
-    "payoutCurrency": { "currencyCode": "BTC" },
-    "payinCurrency": { "currencyCode": "TBD" },
+    "payoutCurrency": { "currencyCode": "BTC"},
+    "payinCurrency": { "currencyCode": "TBD", "minSubunit": 1, "maxSubunit": 5 },
     "payinMethods": [{
       "kind": "ABC_LEDGER",
       "requiredPaymentDetails": {}

@@ -3,6 +3,10 @@ import { RfqContext } from './RfqContext'
 import { convertToBaseUnits, formatUnits, fromCents, getExchangeRate } from '../currency-utils'
 
 type PayinAmountInputProps = {
+  minPayinAmount: number;
+  maxPayinAmount: number;
+  isAmountValid: boolean;
+  validateAmount: (value: string) => void;
   currentPayinAmount: string;
   setCurrentPayinAmount: (value: string) => void;
   currentPayoutAmount: string;
@@ -38,18 +42,19 @@ export function PayinAmountInput(props: PayinAmountInputProps) {
     props.setCurrentPayoutAmount(
       convertToBaseUnits(formattedPayinAmount, offering.payoutUnitsPerPayinUnit)
     )
+    props.validateAmount(formattedPayinAmount)
   }
 
   return (
     <div>
       <div className="relative mt-2 rounded-md shadow-sm">
-        {/* <p className={`absolute mt-[-10px] ml-3 text-sm text-red-600 ${props.isAmountValid ? 'hidden' : ''}`}>
-          {props.minQuoteAmount >= 0 && parseFloat(props.currentPayoutAmount) < props.minQuoteAmount
-            ? `Minimum order is ${props.minQuoteAmount} ${payoutCurrency}`
-            : props.maxQuoteAmount >= 0 && parseFloat(props.currentPayoutAmount) > props.maxQuoteAmount
-            ? `Maximum order is ${props.maxQuoteAmount} ${payoutCurrency}`
+        <p className={`absolute mt-[-10px] ml-3 text-sm text-red-600 ${props.isAmountValid ? 'hidden' : ''}`}>
+          {props.minPayinAmount >= 0 && parseFloat(props.currentPayinAmount) < props.minPayinAmount
+            ? `Minimum order is ${props.minPayinAmount} ${payinCurrency}`
+            : props.maxPayinAmount >= 0 && parseFloat(props.currentPayinAmount) > props.maxPayinAmount
+            ? `Maximum order is ${props.maxPayinAmount} ${payinCurrency}`
             : null}
-        </p> */}
+        </p>
         <div className="flex items-center">
           <input
             type="text"
@@ -87,7 +92,7 @@ export function PayinAmountInput(props: PayinAmountInputProps) {
         {offering.feeSubunits ? (
           <div className="text-right text-gray-400 mt-2">{fromCents(offering.feeSubunits).format()}</div>
         ) : (
-          <div className="text-right text-gray-400 mt-2">0.00 {payoutCurrency}</div>
+          <div className="text-right text-gray-400 mt-2">0.00 {payinCurrency}</div>
         )}     
       </div>
     </div>
