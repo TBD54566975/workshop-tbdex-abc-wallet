@@ -1,8 +1,8 @@
 import { useContext } from 'react'
 import { RfqContext } from './RfqContext'
-import { money } from '../currency-utils'
+import { BTC, formatUnits, money } from '../currency-utils'
 
-type ReviewFormProps = {
+type ReviewPageProps = {
   onSubmit: () => void;
   onBack: () => void;
 }
@@ -14,18 +14,18 @@ type ReviewFormProps = {
  * @param {Function} props.onBack - A function to go back to the previous step.
  * @returns {JSX.Element} - Returns the ReviewForm component.
  */
-export function ReviewForm(props: ReviewFormProps) {
+export function ReviewPage(props: ReviewPageProps) {
   const {
     offering,
     payinAmount,
     payoutAmount,
-    payoutMethod,
-    recipientBtcObject
+    btcAddress,
   } = useContext(RfqContext)
 
   const payinCurrency = offering?.payinCurrency.currencyCode
   const payoutCurrency = offering?.payoutCurrency.currencyCode
-  const payinUnits = money(payinAmount).format() // todo hard coded currency
+  const payinUnits = money(payinAmount).format()
+  const payoutUnits = formatUnits(payoutAmount, 8)
 
   const handleSubmit = () => {
     props.onSubmit()
@@ -40,8 +40,8 @@ export function ReviewForm(props: ReviewFormProps) {
         <div className='text-xs mt-1 px-3'>Transfer amount</div>
       </div>
       <div className="mt-3 text-gray-500">
-        <div className='text-white text-sm font-medium px-3'>{payoutAmount} {payoutCurrency}</div>
-        <div className='text-xs mt-1 px-3'>Total to recipient</div>
+        <div className='text-white text-sm font-medium px-3'>{payoutUnits} {payoutCurrency}</div>
+        <div className='text-xs mt-1 px-3'>Total to you</div>
       </div>
 
       {/* <div className="mt-6 text-gray-400">
@@ -54,7 +54,7 @@ export function ReviewForm(props: ReviewFormProps) {
         <div className='text-xs font-small px-3'>
           <div className='text-white'>{offering.payoutMethods[0].kind}</div>
         </div>
-        <div className='text-xs px-3 mt-1'>{recipientBtcObject.btcAddress}</div>
+        <div className='text-xs px-3 mt-1'>{btcAddress.btcAddress}</div>
       </div>
 
       <div className="mx-8 fixed inset-x-0 bottom-6 z-10 flex justify-center">

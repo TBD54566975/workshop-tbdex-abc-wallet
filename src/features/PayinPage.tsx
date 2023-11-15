@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { QuoteAmountInput } from './QuoteAmountInput'
+import { PayinAmountInput } from './PayinAmountInput'
 import { RfqContext } from './RfqContext'
 import { USD } from '../currency-utils'
 import { NextButton } from '../common/NextButton'
@@ -14,7 +14,7 @@ type SetQuoteAmountFormProps = {
  * @param {Function} props.onNext - A function to proceed to the next step.
  * @returns {JSX.Element} - Returns the SetQuoteAmountForm component.
  */
-export function SetQuoteAmountForm(props: SetQuoteAmountFormProps) {
+export function PayinPage(props: SetQuoteAmountFormProps) {
   const {offering, payinAmount, setPayinAmount, payoutAmount, setPayoutAmount} = useContext(RfqContext)
   const [currentPayoutAmount, setCurrentQuoteAmount] = useState(payoutAmount)
   const [currentPayinAmount, setCurrentBaseAmount] = useState(payinAmount)
@@ -23,16 +23,16 @@ export function SetQuoteAmountForm(props: SetQuoteAmountFormProps) {
   const handleNext = () => {
     setHasAttemptedNext(true)
     if (isNaN(parseFloat(currentPayoutAmount))) return
+      console.log(currentPayoutAmount)
       setPayoutAmount(currentPayoutAmount)
       setPayinAmount(currentPayinAmount)
       console.log(currentPayinAmount)
       props.onNext()
-    
   }
 
   return (
     <>
-      <QuoteAmountInput
+      <PayinAmountInput
         currentPayinAmount={currentPayinAmount}
         setCurrentPayinAmount={setCurrentBaseAmount}
         currentPayoutAmount={currentPayoutAmount}
@@ -41,7 +41,7 @@ export function SetQuoteAmountForm(props: SetQuoteAmountFormProps) {
 
       <div className="mx-8 fixed inset-x-0 bottom-6 z-10 flex flex-col items-center justify-center">
         {(currentPayoutAmount === '' && hasAttemptedNext) && (
-          <p className="text-sm text-red-600 mb-2">Enter an amount in {offering.payoutCurrency.currencyCode}</p>
+          <p className="text-sm text-red-600 mb-2">Enter an amount in {offering.payinCurrency.currencyCode}</p>
         )}
         <NextButton onNext={handleNext} />
       </div>

@@ -1,6 +1,6 @@
-import { RecipientBtcForm } from './RecipientBtcForm'
-import { SetQuoteAmountForm } from './SetQuoteAmountForm'
-import { ReviewForm } from './ReviewForm'
+import { BtcAddressPage } from './BtcAddressPage'
+import { PayinPage } from './PayinPage'
+import { ReviewPage } from './ReviewPage'
 
 export enum RfqFormIds {
   SetQuoteAmount = 'setQuoteAmount',
@@ -26,14 +26,14 @@ export const getRfqForms = (offering, handleNext, handleBack) => {
     {
       title: '',
       component: (
-        <SetQuoteAmountForm onNext={handleNext} />
+        <PayinPage onNext={handleNext} />
       ),
       id: RfqFormIds.SetQuoteAmount
     },
     {
       title: 'What\'s your BTC address?',
       component: (
-        <RecipientBtcForm
+        <BtcAddressPage
           schema={offering.payoutMethods[0].requiredPaymentDetails}
           onBack={handleBack}
           onNext={handleNext}
@@ -43,7 +43,7 @@ export const getRfqForms = (offering, handleNext, handleBack) => {
     },
     {
       title: 'Review your request',
-      component: <ReviewForm onBack={handleBack} onSubmit={handleNext} />,
+      component: <ReviewPage onBack={handleBack} onSubmit={handleNext} />,
       id: RfqFormIds.Review
     }
   ]

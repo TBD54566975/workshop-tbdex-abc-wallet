@@ -18,18 +18,16 @@ type RecipientBtcFormProps = {
  * @param {Function} props.onNext - A function to proceed to the next step.
  * @returns {JSX.Element} - Returns the RecipientBankForm component.
  */
-export function RecipientBtcForm(props: RecipientBtcFormProps) {
-  const { recipientBtcObject, setRecipientBtcObject } = useContext(RfqContext)
-  const [recipientBtcForm, setRecipientBankForm] = useState({
-    'btcAddress': recipientBtcObject ? recipientBtcObject.btcAddress : '',
-  })
+export function BtcAddressPage(props: RecipientBtcFormProps) {
+  const { btcAddress, setBtcAddress } = useContext(RfqContext)
+  const [recipientBtcForm, setRecipientBankForm] = useState({'btcAddress': btcAddress ? btcAddress.btcAddress : ''})
   const [hasAttemptedNext, setHasAttemptedNext] = useState(false)
   const isInvalidPayoutDetails = recipientBtcForm.btcAddress === ''
 
   const handleNext = () => {
     setHasAttemptedNext(true)
     if (!isInvalidPayoutDetails) {
-      setRecipientBtcObject(recipientBtcForm)
+      setBtcAddress(recipientBtcForm)
       props.onNext()
     }
   }

@@ -15,20 +15,8 @@ export const RfqContext = React.createContext({
   setPayoutAmount: undefined, 
   vcs: undefined,
   setVcs: undefined,
-  kycProof: undefined,
-  setKycProof: undefined,
-  recipientNameObject: undefined,
-  setRecipientNameObject: undefined,
-  recipientBtcObject: undefined,
-  setRecipientBtcObject: undefined,
-  recipientMomoObject: undefined,
-  setRecipientMomoObject: undefined,
-  recipientDob: undefined,
-  setRecipientDob: undefined,
-  recipientCountry: undefined,
-  setRecipientCountry: undefined,
-  payoutMethod: undefined,
-  setPayoutMethod: undefined,
+  btcAddress: undefined,
+  setBtcAddress: undefined,
 })
 
 export const RfqProvider = ({ children, offering }) => {
@@ -36,15 +24,7 @@ export const RfqProvider = ({ children, offering }) => {
   const [payoutAmount, setPayoutAmount] = useState('')
 
   const [vcs, setVcs] = useState([])
-  const [kycProof, setKycProof] = useState(undefined)
-
-  const [recipientNameObject, setRecipientNameObject] = useState()
-  const [recipientBtcObject, setRecipientBtcObject] = useState()
-  const [recipientMomoObject, setRecipientMomoObject] = useState()
-  const [recipientDob, setRecipientDob] = useState()
-  const [recipientCountry, setRecipientCountry] = useState()
-  const [payoutMethod, setPayoutMethod] = useState()
-
+  const [btcAddress, setBtcAddress] = useState()
 
   return (
     <RfqContext.Provider
@@ -56,20 +36,8 @@ export const RfqProvider = ({ children, offering }) => {
         setPayoutAmount,
         vcs,
         setVcs,
-        kycProof,
-        setKycProof,
-        recipientNameObject,
-        setRecipientNameObject,
-        recipientBtcObject,
-        setRecipientBtcObject,
-        recipientMomoObject,
-        setRecipientMomoObject,
-        recipientDob,
-        setRecipientDob,
-        recipientCountry,
-        setRecipientCountry,
-        payoutMethod,
-        setPayoutMethod
+        btcAddress,
+        setBtcAddress,
       }}
     >
       {children}

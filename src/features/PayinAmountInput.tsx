@@ -1,9 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { RfqContext } from './RfqContext'
-import { Dropdown } from '../common/Dropdown'
 import { convertToBaseUnits, formatUnits, fromCents, getExchangeRate } from '../currency-utils'
 
-type QuoteAmountInputProps = {
+type PayinAmountInputProps = {
   currentPayinAmount: string;
   setCurrentPayinAmount: (value: string) => void;
   currentPayoutAmount: string;
@@ -25,29 +24,21 @@ type QuoteAmountInputProps = {
  * @param {Function} props.setSelectedOffering - A function to set the selected offering.
  * @returns {JSX.Element} - Returns the QuoteAmountInput component.
  */
-export function QuoteAmountInput(props: QuoteAmountInputProps) {
+export function PayinAmountInput(props: PayinAmountInputProps) {
   const { offering } = useContext(RfqContext)
   // const [selectedCurrency, setSelectedCurrency] = useState(props.selectedOffering.quoteCurrency.currencyCode)
 
   const payinCurrency = offering.payinCurrency.currencyCode
   const payoutCurrency = offering.payoutCurrency.currencyCode
 
-  const handleQuoteAmountChange = (quoteUnits: string) => {
-    const formattedPayoutUnits = formatUnits(quoteUnits, 8)
+  const handlePayinAmountChange = (payinAmount: string) => {
+    const formattedPayinAmount = formatUnits(payinAmount, 8)
   
-    props.setCurrentPayoutAmount(formattedPayoutUnits)
-    props.setCurrentPayinAmount(
-      convertToBaseUnits(formattedPayoutUnits, offering.payoutUnitsPerPayinUnit)
+    props.setCurrentPayinAmount(formattedPayinAmount)
+    props.setCurrentPayoutAmount(
+      convertToBaseUnits(formattedPayinAmount, offering.payoutUnitsPerPayinUnit)
     )
   }
-
-  // const handleOfferingChange = (currency) => {
-  //   if (currency !== selectedCurrency) {
-  //     setSelectedCurrency(currency)
-  //     props.setSelectedOffering(offeringsByCountry[currency])
-  //     handleQuoteAmountChange('')
-  //   }
-  // }
 
   return (
     <div>
@@ -65,8 +56,8 @@ export function QuoteAmountInput(props: QuoteAmountInputProps) {
             className="block w-full text-2xl border-0 text-indigo-600 bg-transparent rounded-md focus:text-indigo-600 placeholder:text-gray-400 focus:ring-transparent sm:leading-6"
             placeholder="0.00"
             aria-describedby="price-currency"
-            value={props.currentPayoutAmount}
-            onChange={(e) => handleQuoteAmountChange(e.target.value)}
+            value={props.currentPayinAmount}
+            onChange={(e) => handlePayinAmountChange(e.target.value)}
           />
           <div className='mr-10 pr-1 mb-1 text-gray-400 text-xl'>{payinCurrency}</div>
         </div>        
@@ -80,7 +71,7 @@ export function QuoteAmountInput(props: QuoteAmountInputProps) {
             className="block w-full text-2xl border-0 py-1.5 text-neutral-200 bg-transparent rounded-md placeholder:text-gray-400 focus:ring-transparent sm:leading-6"
             placeholder="0.00"
             aria-describedby="price-currency"
-            value={formatUnits(props.currentPayinAmount, 2)}
+            value={formatUnits(props.currentPayoutAmount, 8)}
             readOnly
           />
           <div className='mr-10 pr-1 mb-1 text-gray-400 text-xl'>{payoutCurrency}</div>

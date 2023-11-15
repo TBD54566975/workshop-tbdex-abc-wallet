@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { RfqModal } from './RfqModal.tsx'
 import { RfqProvider } from './RfqContext.tsx'
-import { Flag } from '../common/Flag.tsx'
 import { Spinner } from '../common/Spinner.tsx'
 import { fetchOfferings } from '../apiUtils.js'
 
