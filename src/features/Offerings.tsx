@@ -8,33 +8,21 @@ import { Spinner } from '../common/Spinner.tsx'
 import { fetchOfferings } from '../apiUtils.js'
 
 export function Offerings() {
-type Offering = {
-  name: string;
-  description: string;
-  fee: 'low' | 'medium' | 'high'
-}
-
-type Offerings = {
-  [pfi: string]: Offering;
-}
-
-  const [offerings, setOfferings] = useState<Offerings | undefined>()
+  const [offerings, setOfferings] = useState(undefined)
   const [rfqModalOpen, setRfqModalOpen] = useState(false)
-  const [selectedCountry, setSelectedCountry] = useState<string | undefined>()
+  const [selectedOffering, setSelectedOffering] = useState<string | undefined>()
   const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000))
       setOfferings(await fetchOfferings())
-       
     }
-
     fetchData()
   }, [])
 
   const handleCountryClick = (countryCode) => {
-    setSelectedCountry(countryCode)
+    setSelectedOffering(countryCode)
     setRfqModalOpen(true)
   }
 
@@ -43,11 +31,13 @@ type Offerings = {
     if (hasSubmitted) {
       navigate('/')
     } else {
-      navigate('/remittance', { state: { selectedCountry } })
+      navigate('/exchange', { state: { selectedCountry: selectedOffering } })
     }
   }
 
   if (!offerings) return <Spinner />
+
+  console.log(offerings[0].payoutUnitsPerPayinUnit)
 
   return (
     <>
@@ -56,25 +46,22 @@ type Offerings = {
         aria-label="Directory"
       >
         <ul role="list" className="divide-y divide-transparent">
-          {Object.keys(offerings).map((offering) => (
-            <li key={`currency-${offering}`} className="py-1">
+          {offerings.map((offering) => (
+            <li key={`${offering}`} className="py-1">
               <button
                 className="w-full h-full rounded-lg px-4 py-1 hover:bg-neutral-600/20 flex"
                 onClick={() => handleCountryClick(offering)}
               >
                 <div className="flex items-center flex-grow pr-2">
                   <div className="flex justify-center items-center w-8 h-8 mt-0.5 rounded-lg bg-neutral-600 text-white text-sm font-semibold">
-                    <Flag country={offering} />
+                    {/* <Flag country={offering} /> */}
                   </div>
                   <div className="min-w-0 truncate text-left pl-3">
                     <p className="text-xs font-medium leading-6 text-neutral-100">
-                      {offerings[offering].name}
+                      {offering.description}
                     </p>
                     <p className="truncate text-xs leading-5 text-gray-500">
-                      Fee type: {offerings[offering].fee}
-                    </p>
-                    <p className="truncate text-xs leading-5 text-gray-500">
-                      Description {offerings[offering].description}
+                      {offering.payoutUnitsPerPayinUnit} {offering.payoutCurrency.currencyCode} for 1 {offering.payinCurrency.currencyCode}
                     </p>
                   </div>
                 </div>
@@ -88,15 +75,14 @@ type Offerings = {
         </ul>
       </div>
 
-      {rfqModalOpen && selectedCountry && (
-        <RfqProvider offeringsByCountry={offerings[selectedCountry]}>
+      {rfqModalOpen && selectedOffering && (
+        <RfqProvider offering={selectedOffering}>
           <RfqModal
-            country={offerings[selectedCountry].country}
             isOpen={rfqModalOpen}
             onClose={handleModalClose}
           />
         </RfqProvider>
       )}
     </>
-  );
+  )
 }

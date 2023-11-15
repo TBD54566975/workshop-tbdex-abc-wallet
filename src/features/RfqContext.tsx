@@ -9,20 +9,18 @@ import React, { useState } from 'react'
  */
 export const RfqContext = React.createContext({ 
   offering: undefined,
-  offeringsByCountry: undefined,
-  setOffering: undefined,
-  baseAmount: undefined,
-  setBaseAmount: undefined,
-  quoteAmount: undefined, 
-  setQuoteAmount: undefined, 
+  payinAmount: undefined,
+  setPayinAmount: undefined,
+  payoutAmount: undefined, 
+  setPayoutAmount: undefined, 
   vcs: undefined,
   setVcs: undefined,
   kycProof: undefined,
   setKycProof: undefined,
   recipientNameObject: undefined,
   setRecipientNameObject: undefined,
-  recipientBankObject: undefined,
-  setRecipientBankObject: undefined,
+  recipientBtcObject: undefined,
+  setRecipientBtcObject: undefined,
   recipientMomoObject: undefined,
   setRecipientMomoObject: undefined,
   recipientDob: undefined,
@@ -33,16 +31,15 @@ export const RfqContext = React.createContext({
   setPayoutMethod: undefined,
 })
 
-export const RfqProvider = ({ children, offeringsByCountry }) => {
-  const [offering, setOffering] = useState()
-  const [baseAmount, setBaseAmount] = useState('')
-  const [quoteAmount, setQuoteAmount] = useState('')
+export const RfqProvider = ({ children, offering }) => {
+  const [payinAmount, setPayinAmount] = useState('')
+  const [payoutAmount, setPayoutAmount] = useState('')
 
   const [vcs, setVcs] = useState([])
   const [kycProof, setKycProof] = useState(undefined)
 
   const [recipientNameObject, setRecipientNameObject] = useState()
-  const [recipientBankObject, setRecipientBankObject] = useState()
+  const [recipientBtcObject, setRecipientBtcObject] = useState()
   const [recipientMomoObject, setRecipientMomoObject] = useState()
   const [recipientDob, setRecipientDob] = useState()
   const [recipientCountry, setRecipientCountry] = useState()
@@ -53,20 +50,18 @@ export const RfqProvider = ({ children, offeringsByCountry }) => {
     <RfqContext.Provider
       value={{
         offering,
-        setOffering,
-        offeringsByCountry,
-        baseAmount,
-        setBaseAmount,
-        quoteAmount,
-        setQuoteAmount,
+        payinAmount,
+        setPayinAmount,
+        payoutAmount,
+        setPayoutAmount,
         vcs,
         setVcs,
         kycProof,
         setKycProof,
         recipientNameObject,
         setRecipientNameObject,
-        recipientBankObject,
-        setRecipientBankObject,
+        recipientBtcObject,
+        setRecipientBtcObject,
         recipientMomoObject,
         setRecipientMomoObject,
         recipientDob,

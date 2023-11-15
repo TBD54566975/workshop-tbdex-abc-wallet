@@ -14,7 +14,7 @@ const navigation = [
   },
   {
     name: 'Exchange',
-    link: '/offerings',
+    link: '/exchange',
     icon: ArrowsUpDownIcon,
   },
 ]

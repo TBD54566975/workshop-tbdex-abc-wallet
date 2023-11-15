@@ -14,7 +14,6 @@ import 'react-toastify/dist/ReactToastify.css'
  * @returns {JSX.Element} - Returns the Exchanges component.
  */
 export function Exchanges() {
-  const accountId = localStorage.getItem('accountId')
   const [exchanges, setExchanges] = useState(undefined)
   const [selectedExchange, setSelectedExchange] = useState()
   const [exchangeAwaitingResponse, setExchangeAwaitingResponse] = useState()

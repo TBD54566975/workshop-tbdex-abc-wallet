@@ -17,7 +17,7 @@ const router = createBrowserRouter([
         element: <ActivityPage />,
       },
       {
-        path: '/offerings',
+        path: '/exchange',
         element: <OfferingsPage />,
       },
     ],

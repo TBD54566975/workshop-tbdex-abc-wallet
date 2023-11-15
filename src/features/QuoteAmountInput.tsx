@@ -4,16 +4,10 @@ import { Dropdown } from '../common/Dropdown'
 import { convertToBaseUnits, formatUnits, fromCents, getExchangeRate } from '../currency-utils'
 
 type QuoteAmountInputProps = {
-  minQuoteAmount: number;
-  maxQuoteAmount: number;
-  isAmountValid: boolean;
-  validateAmount: (value: string) => void;
-  currentBaseAmount: string;
-  setCurrentBaseAmount: (value: string) => void;
-  currentQuoteAmount: string;
-  setCurrentQuoteAmount: (value: string) => void;
-  selectedOffering: any;
-  setSelectedOffering: (value: unknown) => void;
+  currentPayinAmount: string;
+  setCurrentPayinAmount: (value: string) => void;
+  currentPayoutAmount: string;
+  setCurrentPayoutAmount: (value: string) => void;
 }
 
 /**
@@ -32,56 +26,49 @@ type QuoteAmountInputProps = {
  * @returns {JSX.Element} - Returns the QuoteAmountInput component.
  */
 export function QuoteAmountInput(props: QuoteAmountInputProps) {
-  const { offeringsByCountry } = useContext(RfqContext)
-  const currencyKeys = Object.keys(offeringsByCountry)
-  const [selectedCurrency, setSelectedCurrency] = useState(props.selectedOffering.quoteCurrency.currencyCode)
+  const { offering } = useContext(RfqContext)
+  // const [selectedCurrency, setSelectedCurrency] = useState(props.selectedOffering.quoteCurrency.currencyCode)
 
-  const baseCurrency = props.selectedOffering.baseCurrency.currencyCode
-  const quoteCurrency = props.selectedOffering.quoteCurrency.currencyCode
+  const payinCurrency = offering.payinCurrency.currencyCode
+  const payoutCurrency = offering.payoutCurrency.currencyCode
 
   const handleQuoteAmountChange = (quoteUnits: string) => {
-    const formattedQuoteUnits =
-      selectedCurrency === 'BTC'
-        ? formatUnits(quoteUnits, 8)
-        : formatUnits(quoteUnits, 2)
+    const formattedPayoutUnits = formatUnits(quoteUnits, 8)
   
-    props.setCurrentQuoteAmount(formattedQuoteUnits)
-    props.setCurrentBaseAmount(
-      convertToBaseUnits(formattedQuoteUnits, props.selectedOffering.quoteUnitsPerBaseUnit)
+    props.setCurrentPayoutAmount(formattedPayoutUnits)
+    props.setCurrentPayinAmount(
+      convertToBaseUnits(formattedPayoutUnits, offering.payoutUnitsPerPayinUnit)
     )
-    props.validateAmount(formattedQuoteUnits)
   }
 
-  const handleOfferingChange = (currency) => {
-    if (currency !== selectedCurrency) {
-      setSelectedCurrency(currency)
-      props.setSelectedOffering(offeringsByCountry[currency])
-      handleQuoteAmountChange('')
-    }
-  }
+  // const handleOfferingChange = (currency) => {
+  //   if (currency !== selectedCurrency) {
+  //     setSelectedCurrency(currency)
+  //     props.setSelectedOffering(offeringsByCountry[currency])
+  //     handleQuoteAmountChange('')
+  //   }
+  // }
 
   return (
     <div>
       <div className="relative mt-2 rounded-md shadow-sm">
-        <p className={`absolute mt-[-10px] ml-3 text-sm text-red-600 ${props.isAmountValid ? 'hidden' : ''}`}>
-          {props.minQuoteAmount >= 0 && parseFloat(props.currentQuoteAmount) < props.minQuoteAmount
-            ? `Minimum order is ${props.minQuoteAmount} ${quoteCurrency}`
-            : props.maxQuoteAmount >= 0 && parseFloat(props.currentQuoteAmount) > props.maxQuoteAmount
-            ? `Maximum order is ${props.maxQuoteAmount} ${quoteCurrency}`
+        {/* <p className={`absolute mt-[-10px] ml-3 text-sm text-red-600 ${props.isAmountValid ? 'hidden' : ''}`}>
+          {props.minQuoteAmount >= 0 && parseFloat(props.currentPayoutAmount) < props.minQuoteAmount
+            ? `Minimum order is ${props.minQuoteAmount} ${payoutCurrency}`
+            : props.maxQuoteAmount >= 0 && parseFloat(props.currentPayoutAmount) > props.maxQuoteAmount
+            ? `Maximum order is ${props.maxQuoteAmount} ${payoutCurrency}`
             : null}
-        </p>
+        </p> */}
         <div className="flex items-center">
           <input
             type="text"
             className="block w-full text-2xl border-0 text-indigo-600 bg-transparent rounded-md focus:text-indigo-600 placeholder:text-gray-400 focus:ring-transparent sm:leading-6"
             placeholder="0.00"
             aria-describedby="price-currency"
-            value={props.currentQuoteAmount}
+            value={props.currentPayoutAmount}
             onChange={(e) => handleQuoteAmountChange(e.target.value)}
           />
-          <div className="w-40 text-xl" style={{ position: 'relative', top: '-5px', }}>
-            <Dropdown items={currencyKeys} selectedItem={selectedCurrency} setSelectedItem={handleOfferingChange} selectedItemColor='text-gray-400' label={currencyKeys[0]} />
-          </div>
+          <div className='mr-10 pr-1 mb-1 text-gray-400 text-xl'>{payinCurrency}</div>
         </div>        
         <label className="block text-xs leading-6 pl-3 -mt-3 text-gray-300">{'You Send'}</label>
       </div>
@@ -93,23 +80,23 @@ export function QuoteAmountInput(props: QuoteAmountInputProps) {
             className="block w-full text-2xl border-0 py-1.5 text-neutral-200 bg-transparent rounded-md placeholder:text-gray-400 focus:ring-transparent sm:leading-6"
             placeholder="0.00"
             aria-describedby="price-currency"
-            value={formatUnits(props.currentBaseAmount, 2)}
+            value={formatUnits(props.currentPayinAmount, 2)}
             readOnly
           />
-          <div className='mr-10 pr-1 mb-1 text-gray-400 text-xl'>{baseCurrency}</div>
+          <div className='mr-10 pr-1 mb-1 text-gray-400 text-xl'>{payoutCurrency}</div>
         </div>   
       </div>
       <label className="block text-xs leading-6 pl-3 -mt-1 text-gray-300"> {'They get'} </label>{' '}
 
       <div className="grid grid-cols-2 gap-0.5 mt-5 border border-gray-500 rounded-md p-3 text-xs">
         <div className="text-left text-gray-400">Est. rate</div>
-        <div className="text-right w-[130%] ml-[-30%] text-gray-400">{getExchangeRate(props.selectedOffering.quoteUnitsPerBaseUnit, baseCurrency, quoteCurrency)}</div>
+        <div className="text-right w-[130%] ml-[-30%] text-gray-400">{getExchangeRate(offering.payoutUnitsPerPayinUnit, payinCurrency, payoutCurrency)}</div>
 
         <div className="text-left text-gray-400 mt-2">Service fee</div>
-        {props.selectedOffering.feeSubunits ? (
-          <div className="text-right text-gray-400 mt-2">{fromCents(props.selectedOffering.feeSubunits).format()}</div>
+        {offering.feeSubunits ? (
+          <div className="text-right text-gray-400 mt-2">{fromCents(offering.feeSubunits).format()}</div>
         ) : (
-          <div className="text-right text-gray-400 mt-2">0.00 {quoteCurrency}</div>
+          <div className="text-right text-gray-400 mt-2">0.00 {payoutCurrency}</div>
         )}     
       </div>
     </div>

@@ -1,17 +1,13 @@
-import { Fragment, useState, useContext, useEffect } from 'react'
+import { Fragment, useState, useContext } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { getCode } from 'country-list'
 import { RfqContext } from './RfqContext'
 import { RfqFormIds, getRfqForms } from './RfqForms'
 import { getSubunits } from '../currency-utils'
 import { BackButton } from '../common/BackButton'
 import { Panel } from '../common/Panel'
-import { Flag } from '../common/Flag'
-import dayjs from 'dayjs'
 import '../styles/date.css'
 
 type RfqModalProps = {
-  country: string;
   isOpen: boolean;
   onClose: (hasSubmitted: boolean) => void;
 }
@@ -26,74 +22,31 @@ type RfqModalProps = {
  */
 export function RfqModal(props: RfqModalProps) {
   const [step, setStep] = useState(0)
-  const {
-    offering,
-    setOffering,
-    offeringsByCountry,
-    recipientNameObject,
-    recipientDob,
-    recipientCountry,
-    payoutMethod,
-    recipientMomoObject,
-    recipientBankObject,
-    quoteAmount,
-  } = useContext(RfqContext)
-
-  const accountId = localStorage.getItem('accountId')
-  const currencyKeys = Object.keys(offeringsByCountry)
-  
-  useEffect(() => {
-    if (!offering) {
-      setOffering(offeringsByCountry[currencyKeys[0]])
-    }
-  }, [])
+  const { offering } = useContext(RfqContext)
 
   if (!offering) return null
 
-  populateRfq()
-
   const sendRfq = async () => { 
-    const quoteCurrencyCode = offering.quoteCurrency.currencyCode
-    const quoteAmountSubunits = getSubunits(quoteAmount, quoteCurrencyCode)
-    const recipient = {
-      firstName: recipientNameObject.firstName,
-      lastName: recipientNameObject.lastName,
-      dob: dayjs(recipientDob).format('YYYY-MM-DD'),
-      country: getCode(recipientCountry)
-    }
-    const deliveryMethod = {
-      kind: payoutMethod.kind,
-      paymentDetails: {
-        accountNumber: recipientMomoObject?.accountNumber || recipientBankObject?.accountNumber,
-        reason: recipientMomoObject?.reason?.value || recipientBankObject?.reason?.value
-      }               
-    }
+    // TODO: create exchange here
+    props.onClose(true)
     // await createExchange(accountId, offering.offeringId, quoteAmountSubunits, recipient, deliveryMethod, props.onClose)
   }
 
   const handleNext = async () => {
     const currentFormId = forms[step].id
+    console.log(currentFormId)
     if (currentFormId === RfqFormIds.Review) {
       await sendRfq()
-    } else if (currentFormId === RfqFormIds.RecipientBank) {
-      setStep((prevStep) => prevStep + 2)
     } else {
       setStep((prevStep) => prevStep + 1)
     }
   }
 
   const handleBack = () => {
-    const currentFormId = forms[step].id
-    if (currentFormId === RfqFormIds.Review && ALLOWED_BANKS.includes(payoutMethod.kind)) {
-      setStep((prevStep) => prevStep - 2)
-    } else if (currentFormId === RfqFormIds.RecipientMomo) {
-      setStep((prevStep) => prevStep - 2)
-    } else {
-      setStep((prevStep) => prevStep - 1)
-    }
+    setStep((prevStep) => prevStep - 1)
   }
 
-  const forms = getRfqForms(offering, props.country, handleNext, handleBack)
+  const forms = getRfqForms(offering, handleNext, handleBack)
   const { title, component } = forms[step]
 
   return (
@@ -127,9 +80,9 @@ export function RfqModal(props: RfqModalProps) {
                   className={'relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:mt-24 mt-24 w-80 h-128 lg:ml-72'}
                 >
                   <div className='flex items-center justify-center text-white'>
-                    <div className='text-sm'>{props.country}</div>
+                    <div className='text-sm'>{offering.description}</div>
                     <span>&nbsp;</span>
-                    <Flag country={props.country} />
+                    {/* <Flag country={props.country} /> */}
                   </div>
                   {step > 0 && (<BackButton onBack={handleBack}/>)}
 

@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import { RfqContext } from './RfqContext'
 import { money } from '../currency-utils'
-import dayjs from 'dayjs'
 
 type ReviewFormProps = {
   onSubmit: () => void;
@@ -18,19 +17,15 @@ type ReviewFormProps = {
 export function ReviewForm(props: ReviewFormProps) {
   const {
     offering,
-    baseAmount,
-    quoteAmount,
-    recipientNameObject,
-    recipientDob,
-    recipientCountry,
+    payinAmount,
+    payoutAmount,
     payoutMethod,
-    recipientMomoObject,
-    recipientBankObject
+    recipientBtcObject
   } = useContext(RfqContext)
 
-  const baseCurrency = offering?.baseCurrency.currencyCode
-  const quoteCurrency = offering?.quoteCurrency.currencyCode
-  const baseUnits = money(baseAmount).format() // todo hard coded currency
+  const payinCurrency = offering?.payinCurrency.currencyCode
+  const payoutCurrency = offering?.payoutCurrency.currencyCode
+  const payinUnits = money(payinAmount).format() // todo hard coded currency
 
   const handleSubmit = () => {
     props.onSubmit()
@@ -41,25 +36,25 @@ export function ReviewForm(props: ReviewFormProps) {
       <div className='text-xs mt-2 px-3'>Make sure to check the amount and delivery info before sending.</div>
       
       <div className="mt-6 text-gray-500">
-        <div className='text-white text-sm font-medium px-3'>{quoteAmount} {quoteCurrency}</div>
+        <div className='text-white text-sm font-medium px-3'>{payinUnits} {payinCurrency}</div>
         <div className='text-xs mt-1 px-3'>Transfer amount</div>
       </div>
       <div className="mt-3 text-gray-500">
-        <div className='text-white text-sm font-medium px-3'>{baseUnits} {baseCurrency}</div>
+        <div className='text-white text-sm font-medium px-3'>{payoutAmount} {payoutCurrency}</div>
         <div className='text-xs mt-1 px-3'>Total to recipient</div>
       </div>
 
-      <div className="mt-6 text-gray-400">
+      {/* <div className="mt-6 text-gray-400">
         <div className='text-white text-xs font-small px-3'>{recipientNameObject.firstName} {recipientNameObject.lastName}</div>
         <div className='text-xs mt-1 px-3'>{dayjs(recipientDob).format('MM/DD/YYYY')}</div>
         <div className='text-xs mt-1 px-3'>{recipientCountry}</div>
-      </div>
+      </div> */}
 
       <div className="mt-4 text-gray-400">
         <div className='text-xs font-small px-3'>
-          <div className='text-white'>{payoutMethod.kind}</div>
+          <div className='text-white'>{offering.payoutMethods[0].kind}</div>
         </div>
-        <div className='text-xs px-3 mt-1'>{recipientMomoObject?.accountNumber ?? recipientBankObject?.accountNumber}</div>
+        <div className='text-xs px-3 mt-1'>{recipientBtcObject.btcAddress}</div>
       </div>
 
       <div className="mx-8 fixed inset-x-0 bottom-6 z-10 flex justify-center">

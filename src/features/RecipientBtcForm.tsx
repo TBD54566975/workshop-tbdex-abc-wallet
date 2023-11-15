@@ -4,33 +4,32 @@ import { RfqContext } from './RfqContext'
 import { JsonSchemaForm } from '../common/JsonSchemaForm'
 import { NextButton } from '../common/NextButton'
 
-type RecipientMomoFormProps = {
+type RecipientBtcFormProps = {
   schema: unknown
   onBack: () => void
   onNext: () => void
 }
 
 /**
- * This component represents a form for entering recipient's mobile money details.
+ * This component represents a form for entering recipient's bank details.
  *
- * @param {Object} props.schema - The schema for the form.
+ * @param {unknown} props.schema - The JSON schema for the form.
  * @param {Function} props.onBack - A function to go back to the previous step.
  * @param {Function} props.onNext - A function to proceed to the next step.
- * @returns {JSX.Element} - Returns the RecipientMomoForm component.
+ * @returns {JSX.Element} - Returns the RecipientBankForm component.
  */
-export function RecipientMomoForm(props: RecipientMomoFormProps) {
-  const { recipientMomoObject, setRecipientMomoObject } = useContext(RfqContext)
-  const [recipientMomoForm, setRecipientMomoForm] = useState({
-    'accountNumber': recipientMomoObject ? recipientMomoObject.accountNumber : '',
-    'reason': recipientMomoObject ? recipientMomoObject.reason : '',
+export function RecipientBtcForm(props: RecipientBtcFormProps) {
+  const { recipientBtcObject, setRecipientBtcObject } = useContext(RfqContext)
+  const [recipientBtcForm, setRecipientBankForm] = useState({
+    'btcAddress': recipientBtcObject ? recipientBtcObject.btcAddress : '',
   })
   const [hasAttemptedNext, setHasAttemptedNext] = useState(false)
-  const isInvalidPayoutDetails = recipientMomoForm.accountNumber === '' || recipientMomoForm.reason === ''
-  
+  const isInvalidPayoutDetails = recipientBtcForm.btcAddress === ''
+
   const handleNext = () => {
     setHasAttemptedNext(true)
     if (!isInvalidPayoutDetails) {
-      setRecipientMomoObject(recipientMomoForm)
+      setRecipientBtcObject(recipientBtcForm)
       props.onNext()
     }
   }
@@ -41,8 +40,8 @@ export function RecipientMomoForm(props: RecipientMomoFormProps) {
       <JsonSchemaForm
         validator={validator}
         schema={props.schema}
-        formData={recipientMomoForm}
-        onChange={(e) => setRecipientMomoForm(e.formData)}
+        formData={recipientBtcForm}
+        onChange={(e) => setRecipientBankForm(e.formData)}
       />
       <div className="mx-8 fixed inset-x-0 bottom-6 flex flex-col items-center justify-center">
         {isInvalidPayoutDetails && hasAttemptedNext && (
