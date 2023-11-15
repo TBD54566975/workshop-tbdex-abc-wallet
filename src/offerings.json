@@ -1,0 +1,18 @@
+{
+    "PFI 1": {
+      "name": "PFI 1",
+      "description": "TBD -> BTC",
+      "fee": "low"
+    },
+    "PFI 2": {
+      "name": "PFI 2",
+      "description": "BTC -> GHS (Mobile Money)",
+      "fee": "medium"
+    },
+    "PFI 3": {
+      "name": "PFI 3",
+      "description": "BTC -> USD (Debit Cards)",
+      "fee": "high"
+    }
+  }
+  
