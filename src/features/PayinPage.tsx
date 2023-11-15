@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { PayinAmountInput } from './PayinAmountInput'
 import { RfqContext } from './RfqContext'
-import { USD } from '../currency-utils'
 import { NextButton } from '../common/NextButton'
 
 type SetQuoteAmountFormProps = {
@@ -23,10 +22,8 @@ export function PayinPage(props: SetQuoteAmountFormProps) {
   const handleNext = () => {
     setHasAttemptedNext(true)
     if (isNaN(parseFloat(currentPayoutAmount))) return
-      console.log(currentPayoutAmount)
       setPayoutAmount(currentPayoutAmount)
       setPayinAmount(currentPayinAmount)
-      console.log(currentPayinAmount)
       props.onNext()
   }
 

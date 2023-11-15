@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { RfqContext } from './RfqContext'
-import { BTC, formatUnits, money } from '../currency-utils'
+import { formatUnits, money } from '../currency-utils'
 
 type ReviewPageProps = {
   onSubmit: () => void;

@@ -36,8 +36,6 @@ export function Offerings() {
 
   if (!offerings) return <Spinner />
 
-  console.log(offerings[0].payoutUnitsPerPayinUnit)
-
   return (
     <>
       <div
@@ -53,7 +51,7 @@ export function Offerings() {
               >
                 <div className="flex items-center flex-grow pr-2">
                   <div className="flex justify-center items-center w-8 h-8 mt-0.5 rounded-lg bg-neutral-600 text-white text-sm font-semibold">
-                    {/* <Flag country={offering} /> */}
+                    $
                   </div>
                   <div className="min-w-0 truncate text-left pl-3">
                     <p className="text-xs font-medium leading-6 text-neutral-100">

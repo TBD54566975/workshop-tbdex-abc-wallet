@@ -2,7 +2,6 @@ import { Fragment, useState, useContext } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { RfqContext } from './RfqContext'
 import { RfqFormIds, getRfqForms } from './RfqForms'
-import { getSubunits } from '../currency-utils'
 import { BackButton } from '../common/BackButton'
 import { Panel } from '../common/Panel'
 import '../styles/date.css'
@@ -34,7 +33,6 @@ export function RfqModal(props: RfqModalProps) {
 
   const handleNext = async () => {
     const currentFormId = forms[step].id
-    console.log(currentFormId)
     if (currentFormId === RfqFormIds.Review) {
       await sendRfq()
     } else {
