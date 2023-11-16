@@ -5,6 +5,7 @@ import { RfqModal } from './RfqModal.tsx'
 import { RfqProvider } from './RfqContext.tsx'
 import { Spinner } from '../common/Spinner.tsx'
 import { fetchOfferings } from '../apiUtils.js'
+import bitcoinIcon from '../assets/bitcoin.svg'
 
 export function Offerings() {
   const [offerings, setOfferings] = useState(undefined)
@@ -51,7 +52,11 @@ export function Offerings() {
               >
                 <div className="flex items-center flex-grow pr-2">
                   <div className="flex justify-center items-center w-8 h-8 mt-0.5 rounded-lg bg-neutral-600 text-white text-sm font-semibold">
-                    $
+                    <img
+                        src={bitcoinIcon}
+                        alt="bitcoin icon"
+                        style={{ filter: 'var(--color-primary-yellow-filter)' }}
+                      />
                   </div>
                   <div className="min-w-0 truncate text-left pl-3">
                     <p className="text-xs font-medium leading-6 text-neutral-100">
