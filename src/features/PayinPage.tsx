@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { PayinAmountInput } from './PayinAmountInput'
 import { RfqContext } from './RfqContext'
 import { NextButton } from '../common/NextButton'
-import { USD } from '../currency-utils'
+import { TBD } from '../currency-utils'
 
 type SetQuoteAmountFormProps = {
   onNext: () => void;
@@ -16,12 +16,12 @@ type SetQuoteAmountFormProps = {
  */
 export function PayinPage(props: SetQuoteAmountFormProps) {
   const {offering, payinAmount, setPayinAmount, payoutAmount, setPayoutAmount} = useContext(RfqContext)
-  const [currentPayoutAmount, setCurrentQuoteAmount] = useState(payoutAmount)
-  const [currentPayinAmount, setCurrentBaseAmount] = useState(payinAmount)
+  const [currentPayoutAmount, setCurrentPayoutAmount] = useState(payoutAmount)
+  const [currentPayinAmount, setCurrentPayinAmount] = useState(payinAmount)
   const [hasAttemptedNext, setHasAttemptedNext] = useState(false)
 
-  const minPayinAmount = offering.payinCurrency.minSubunit ? USD(offering.payinCurrency.minSubunit).value : -1
-  const maxPayinAmount = offering.payinCurrency.maxSubunit ? USD(offering.payinCurrency.maxSubunit).value : -1
+  const minPayinAmount = offering.payinCurrency.minSubunit ? TBD(offering.payinCurrency.minSubunit).value : -1
+  const maxPayinAmount = offering.payinCurrency.maxSubunit ? TBD(offering.payinCurrency.maxSubunit).value : -1
 
   const isWithinMinMax = (amount: string, minQuoteAmount: number, maxQuoteAmount: number) => {
     const parsedAmount = parseFloat(amount)
@@ -61,9 +61,9 @@ export function PayinPage(props: SetQuoteAmountFormProps) {
         isAmountValid={isAmountValid}
         validateAmount={validateAmount}
         currentPayinAmount={currentPayinAmount}
-        setCurrentPayinAmount={setCurrentBaseAmount}
+        setCurrentPayinAmount={setCurrentPayinAmount}
         currentPayoutAmount={currentPayoutAmount}
-        setCurrentPayoutAmount={setCurrentQuoteAmount}
+        setCurrentPayoutAmount={setCurrentPayoutAmount}
       />
 
       <div className="mx-8 fixed inset-x-0 bottom-6 z-10 flex flex-col items-center justify-center">

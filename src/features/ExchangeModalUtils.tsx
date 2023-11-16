@@ -1,5 +1,5 @@
 import { CheckCircleIcon, QuestionMarkCircleIcon, EllipsisHorizontalCircleIcon, XCircleIcon } from '@heroicons/react/20/solid'
-import { USD, BTC, removeTrailingZeros } from '../currency-utils'
+import { TBD, BTC, removeTrailingZeros } from '../currency-utils'
 import { useState } from 'react'
 
 /**
@@ -13,7 +13,7 @@ import { useState } from 'react'
  * @param {Function} onClose - A function to handle the modal close event.
  * @returns {JSX.Element|null} - Returns the action buttons JSX element if applicable; otherwise, null.
  */
-export const renderActionButtons = (status, amount, currency, accountId, id, onClose) => {
+export const renderActionButtons = (status, amount, currency, id, onClose) => {
   const isUSDC = currency === 'USDC'
   const [isUpdating, setIsUpdating] = useState(false)
 
@@ -42,7 +42,7 @@ export const renderActionButtons = (status, amount, currency, accountId, id, onC
           onClick={() => handleUpdateExchange('accept')}
           disabled={isUpdating}
         >
-          Pay {isUSDC ? USD(amount).format() : removeTrailingZeros(BTC(amount).format())}
+          Pay {isUSDC ? TBD(amount).format() : removeTrailingZeros(BTC(amount).format())}
         </button>
       </div>
     )

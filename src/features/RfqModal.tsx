@@ -4,7 +4,9 @@ import { RfqContext } from './RfqContext'
 import { RfqFormIds, getRfqForms } from './RfqForms'
 import { BackButton } from '../common/BackButton'
 import { Panel } from '../common/Panel'
+import { createExchange } from '../apiUtils'
 import '../styles/date.css'
+import { getSubunits } from '../currency-utils'
 
 type RfqModalProps = {
   isOpen: boolean;
@@ -21,12 +23,13 @@ type RfqModalProps = {
  */
 export function RfqModal(props: RfqModalProps) {
   const [step, setStep] = useState(0)
-  const { offering } = useContext(RfqContext)
+  const { offering, payinAmount, payoutAmount, btcAddress } = useContext(RfqContext)
 
   if (!offering) return null
 
   const sendRfq = async () => { 
     // TODO: create exchange here
+    await createExchange(offering.offeringId, payinAmount, payoutAmount, btcAddress)
     props.onClose(true)
     // await createExchange(accountId, offering.offeringId, quoteAmountSubunits, recipient, deliveryMethod, props.onClose)
   }

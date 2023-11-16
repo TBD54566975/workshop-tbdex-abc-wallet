@@ -5,6 +5,7 @@ import { ExchangeItem } from './ExchangeItem'
 import { ExchangeModal } from './ExchangeModal'
 import { Spinner } from '../common/Spinner'
 import { ToastContainer } from 'react-toastify'
+import { fetchExchanges } from '../apiUtils'
 import 'react-toastify/dist/ReactToastify.css'
 
 /**
@@ -16,7 +17,6 @@ import 'react-toastify/dist/ReactToastify.css'
 export function Exchanges() {
   const [exchanges, setExchanges] = useState(undefined)
   const [selectedExchange, setSelectedExchange] = useState()
-  const [exchangeAwaitingResponse, setExchangeAwaitingResponse] = useState()
   const [exchangeModalOpen, setExchangeModalOpen] = useState(false)
   dayjs.locale('en')
 
@@ -34,8 +34,9 @@ export function Exchanges() {
       // wait a little bit so we can render a pretty spinner animation
       await new Promise(resolve => setTimeout(() => resolve(undefined), 250)) 
       
-      // const fetchedExchanges = await fetchExchanges(accountId)
-      setExchanges([])
+      const fetchedExchanges = await fetchExchanges()
+      console.log(fetchedExchanges)
+      setExchanges(fetchedExchanges)
     }
     init()
   }, [])
@@ -45,10 +46,10 @@ export function Exchanges() {
   //      feel free to change the interval, 
   //      which is currently set to 11 seconds
   useEffect(() => {
+    // TODO: make sure fetching newly created exchanges work now that backend is removed
     setTimeout(async () => {
-      // const fetchedExchanges = await fetchExchanges(accountId)
-      // console.log('polling fetch: ', fetchedExchanges)
-      setExchanges([])
+      const fetchedExchanges = await fetchExchanges()
+      setExchanges(fetchedExchanges)
     }, 11000)
   }, [exchanges])
 
@@ -58,9 +59,6 @@ export function Exchanges() {
   }
   const handleStatusModalClose = (hasSubmitted: boolean) => {
     // await new Promise((resolve) => setTimeout(() => resolve(undefined), 250))
-    if (hasSubmitted) {
-      setExchangeAwaitingResponse(selectedExchange)
-    }
     setExchangeModalOpen(false)
     // console.log('updating the balance')
     // await fetchAccountBalance(accountId)
@@ -83,10 +81,9 @@ export function Exchanges() {
         bodyClassName={() => 'text-sm font-white font-med block p-3'}
       />
       <div className="overflow-auto max-h-[calc(70vh-4rem)] no-scrollbar" aria-label="Directory">
-        <div className="sticky top-0 z-20 border-y border-b-neutral-500 border-t-transparent bg-neutral-800 px-3 py-1.5 text-sm leading-6 text-neutral-200">
+        <div className="sticky top-0 z-1 border-y border-b-neutral-500 border-t-transparent bg-neutral-800 px-3 py-1.5 text-sm leading-6 text-neutral-200">
           <div className="flex">
             <div className="flex-grow pr-2 text-xs text-neutral-100 ml-2 mt-1">Transaction</div>
-            <div className="hidden sm:block w-1/5 text-xs font-medium leading-6 text-neutral-100 pl-2">Date</div>
             <div className="w-1/5 text-xs font-medium leading-6 text-neutral-100 text-right mr-2">Amount</div>
           </div>
         </div>
@@ -96,8 +93,8 @@ export function Exchanges() {
             <p className="truncate text-xs leading-5 text-gray-500">Request an exchange.</p>
           </div>
         ) : (
-          exchanges?.map((exchange) => (
-            <ExchangeItem key={exchange.id} exchange={exchange} exchangeAwaitingResponse={exchangeAwaitingResponse} setExchangeAwaitingResponse={setExchangeAwaitingResponse} handleStatusModalOpen={handleStatusModalOpen}/>
+          exchanges?.map((exchange, index) => (
+            <ExchangeItem key={index} exchange={exchange} handleStatusModalOpen={handleStatusModalOpen}/>
         )))}
 
         {exchangeModalOpen && (

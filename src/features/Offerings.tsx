@@ -21,17 +21,18 @@ export function Offerings() {
     fetchData()
   }, [])
 
-  const handleCountryClick = (countryCode) => {
-    setSelectedOffering(countryCode)
+  const handleModalOpen = (offering) => {
+    setSelectedOffering(offering)
     setRfqModalOpen(true)
   }
 
   const handleModalClose = (hasSubmitted: boolean) => {
     setRfqModalOpen(false)
     if (hasSubmitted) {
+      // TODO: create exchange
       navigate('/')
     } else {
-      navigate('/exchange', { state: { selectedCountry: selectedOffering } })
+      navigate('/')
     }
   }
 
@@ -48,7 +49,7 @@ export function Offerings() {
             <li key={`${offering}`} className="py-1">
               <button
                 className="w-full h-full rounded-lg px-4 py-1 hover:bg-neutral-600/20 flex"
-                onClick={() => handleCountryClick(offering)}
+                onClick={() => handleModalOpen(offering)}
               >
                 <div className="flex items-center flex-grow pr-2">
                   <div className="flex justify-center items-center w-8 h-8 mt-0.5 rounded-lg bg-neutral-600 text-white text-sm font-semibold">

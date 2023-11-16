@@ -5,19 +5,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import { classNames } from '../tailwind-utils'
 import leftBracket from '../assets/left-bracket.svg'
 import rightBracket from '../assets/right-bracket.svg'
-
-const navigation = [
-  {
-    name: 'Activity',
-    link: '/',
-    icon: ClockIcon,
-  },
-  {
-    name: 'Exchange',
-    link: '/exchange',
-    icon: ArrowsUpDownIcon,
-  },
-]
+import { VcCard } from './VcCard'
 
 /**
  * This component represents the root page of the application with a sidebar navigation.
@@ -26,26 +14,6 @@ const navigation = [
  */
 export function RootPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [currentOption, setCurrentOption] = useState('Activity')
-
-  const location = useLocation()
-
-  useEffect(() => {
-    const currentNavigation = navigation.find(item => item.link === location.pathname)
-    if (currentNavigation) {
-      setCurrentOption(currentNavigation.name)
-    }
-  }, [location])
-
-  const handleSidebarItemClick = (index: number) => {
-    if (index === -1) {
-      setCurrentOption('Activity')
-    } else {
-      setCurrentOption(navigation[index].name)
-    }
-
-    setSidebarOpen(false)
-  }
 
   return (
     <>
@@ -114,7 +82,7 @@ export function RootPage() {
                       />
                       <Link
                         to="/"
-                        onClick={() => handleSidebarItemClick(-1)}
+                        // onClick={() => handleSidebarItemClick(-1)}
                         style={{ fontSize: '22px' }}
                       >
                         <div>ABC Wallet</div>
@@ -125,34 +93,7 @@ export function RootPage() {
                         alt="right bracket"
                       />
                     </div>
-                    <nav className="flex flex-1 flex-col">
-                      <ul className="flex flex-1 flex-col gap-y-7">
-                        <li>
-                          <ul className="-mx-2 space-y-1">
-                            {navigation.map((item, index) => (
-                              <li key={item.name}>
-                                <Link
-                                  to={item.link}
-                                  onClick={() => handleSidebarItemClick(index)}
-                                  className={classNames(
-                                    item.name === currentOption
-                                      ? 'bg-neutral-700 text-white'
-                                      : 'text-white hover:text-neutral-200 hover:bg-neutral-600/10',
-                                    'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                                  )}
-                                >
-                                  <item.icon
-                                    className="h-6 w-6 shrink-0"
-                                    aria-hidden="true"
-                                  />
-                                  {item.name}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                      </ul>
-                    </nav>
+                  <VcCard name={'joe schmoe'} username={'github'} />
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -172,7 +113,7 @@ export function RootPage() {
               />
               <Link
                 to="/"
-                onClick={() => handleSidebarItemClick(-1)}
+                // onClick={() => handleSidebarItemClick(-1)}
                 style={{ fontSize: '22px' }}
               >
                 <div
@@ -190,44 +131,7 @@ export function RootPage() {
                 style={{ filter: 'var(--color-primary-yellow-filter)' }}
               />
             </div>
-            <nav className="flex flex-1 flex-col">
-              <ul className="flex flex-1 flex-col gap-y-7">
-                <li>
-                  <ul className="-mx-2 space-y-1">
-                    {navigation.map((item, index) => (
-                      <li key={item.name}>
-                        <Link
-                          to={item.link}
-                          onClick={() => handleSidebarItemClick(index)}
-                          className={classNames(
-                            item.name === currentOption
-                              ? 'bg-neutral-700 text-white'
-                              : 'text-white hover:text-neutral-200 hover:bg-neutral-600/10',
-                            'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                          )}
-                        >
-                          <item.icon
-                            className="h-6 w-6 shrink-0"
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-                <li className="-mx-6 mt-auto">
-                  <a
-                    href="#"
-                    className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-neutral-600/10"
-                  >
-                    <UserCircleIcon className="h-8 w-8 rounded-full text-white"/>
-                    <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">{'fake name'}</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
+            
           </div>
         </div>
 
@@ -240,12 +144,7 @@ export function RootPage() {
             <span className="sr-only">Open sidebar</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
-          <div className="flex-1 text-sm font-semibold leading-6 text-white">{currentOption}</div>
-
-          <Link to="#">
-            <span className="sr-only">Your profile</span>
-            <UserCircleIcon className="h-8 w-8 rounded-full text-white"/>
-          </Link>
+          {/* <div className="flex-1 text-sm font-semibold leading-6 text-white">{currentOption}</div> */}
 
           <div className="ml-auto lg:gap-x-6 lg:pl-64">
             {/* {navigation.find((item) => item.current)?.name} */}

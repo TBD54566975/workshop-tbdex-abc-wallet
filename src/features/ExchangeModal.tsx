@@ -4,7 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { renderActionButtons, renderStatusInfo } from './ExchangeModalUtils'
-import { USD, money, BTC, removeTrailingZeros } from '../currency-utils'
+import { TBD, money, BTC, removeTrailingZeros } from '../currency-utils'
 
 type ExchangeModalProps = {
   exchange: any
@@ -21,9 +21,6 @@ type ExchangeModalProps = {
  * @returns {JSX.Element} - Returns the ExchangeModal component.
  */
 export function ExchangeModal(props: ExchangeModalProps) {
-  const accountId = localStorage.getItem('accountId')
-  const firstName = localStorage.getItem('firstName')
-  const lastName = localStorage.getItem('lastName')
   dayjs.extend(relativeTime)
   
   return (
@@ -59,14 +56,12 @@ export function ExchangeModal(props: ExchangeModalProps) {
                   </button>
                   <div className="flex flex-col items-center p-8 text-center">
                     <div className="flex justify-center items-center w-12 h-12 mt-1 rounded-full bg-indigo-600 text-white text-sm font-semibold mb-4">
-                      {props.exchange.firstName.charAt(0).toUpperCase()}
+                      $
                     </div>
-                    <p className="text-sm font-semibold text-white">{props.exchange.firstName} {props.exchange.lastName}</p>
-                    <p className="text-xs text-gray-500 mt-1">Exchange from {props.exchange.amounts.quoteCurrency} to {props.exchange.amounts.baseCurrency}</p>
+                    {/* <p className="text-sm font-semibold text-white">{props.exchange.firstName} {props.exchange.lastName}</p> */}
+                    <p className="text-xs text-gray-500 mt-1">Exchange from TBD to BTC</p>
                     <div className="mt-8 mb-1 text-3xl font-semibold text-gray-200">
-                      {props.exchange.amounts.quoteCurrency === 'BTC'
-                        ? removeTrailingZeros(BTC(props.exchange.amounts.quote).format())
-                        : USD(props.exchange.amounts.quote).format()}
+                      {removeTrailingZeros(money(props.exchange.payinAmount).format())} TBD
                     </div>
                     <p className="text-xs text-gray-500 mb-3">{dayjs(props.exchange.createdTime).format('MMM D [at] h:mm A')}</p>
 
@@ -75,19 +70,19 @@ export function ExchangeModal(props: ExchangeModalProps) {
                     <div className="w-full mt-6 px-5 pt-3 text-xs text-gray-400">
                       <div className="flex mb-2">
                         <div className="w-1/2 text-left text-gray-500">Amount</div>
-                        <div className="w-1/2 text-right">{money(props.exchange.amounts.base).format()} {props.exchange.amounts.baseCurrency}</div>
+                        <div className="w-1/2 text-right">{removeTrailingZeros(BTC(props.exchange.payoutAmount).format())} BTC</div>
                       </div>
-                      <div className="flex mb-2">
+                      {/* <div className="flex mb-2">
                         <div className="w-1/2 text-left text-gray-500">Delivery method</div>
                         <div className="w-1/2 text-right">{props.exchange.deliveryMethod.replace(/^MOMO_|BANK_/, '')}</div>
-                      </div>
+                      </div> */}
                       <div className="flex mb-2">
                         <div className="w-1/2 text-left text-gray-500">To</div>
-                        <div className="w-1/2 text-right">{props.exchange.firstName} {props.exchange.lastName}</div>
+                        <div className="w-1/2 text-right">{'github'} {'user'}</div>
                       </div>
                       <div className="flex mb-2">
                         <div className="w-1/2 text-left text-gray-500">From</div>
-                        <div className="w-1/2 text-right">{firstName} {lastName}</div>
+                        <div className="w-1/2 text-right">{'github'} {'user'}</div>
                       </div>
                       {props.exchange.status.value === 110 && (
                         <div className="flex mb-2">
@@ -98,7 +93,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
                     </div>
                   </div>
 
-                  {renderActionButtons(props.exchange.status, props.exchange.amounts.quote, props.exchange.amounts.quoteCurrency, accountId, props.exchange.id, props.onClose)}
+                  {renderActionButtons(props.exchange.status, props.exchange.payinAmount, 'TBD', props.exchange.id, props.onClose)}
 
                 </Dialog.Panel>
 

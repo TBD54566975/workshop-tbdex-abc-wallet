@@ -2,7 +2,7 @@ import currency from 'currency.js'
 
 export const fromCents = value => currency(value, { symbol: '', fromCents: true })
 export const money = value => currency(value, { symbol: '' })
-export const USD = value => currency(value)
+export const TBD = value => currency(value)
 export const BTC = value => currency(value, { symbol: '₿', precision: 8})
 
 export function removeTrailingZeros(inputString) {
