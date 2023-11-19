@@ -1,10 +1,16 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { RootPage } from './features/RootPage'
+import { GetCredentialPage } from './features/GetCredentialPage'
 import { ActivityPage } from './features/ActivityPage'
-import { useEffect } from 'react'
-import { DidKeyMethod } from '@web5/dids'
+import { RecoilRoot, useRecoilState } from 'recoil'
+import { RootPage } from './features/RootPage'
+import { credentialsState } from './state'
+import { Spinner } from './common/Spinner'
 
 const router = createBrowserRouter([
+  {
+    path: '/credential-request-token',
+    element: <Spinner />
+  },
   {
     path: '/',
     element: (
@@ -20,22 +26,19 @@ const router = createBrowserRouter([
 ])
 
 function ChooseRoute() {
-  useEffect(() => {
-    const init = async () => {
-      if (localStorage.getItem('did') === null) {
-        const didState = await DidKeyMethod.create()
-        localStorage.setItem('did', didState.did)
-      }
-    }
-    init()
-  }, [])
+  const [credentials] = useRecoilState(credentialsState)
 
-  console.log(localStorage.getItem('did'))
-  return (
-    <RootPage />
-  )
+  if (credentials.length === 0) {
+    return <GetCredentialPage />
+  } else {
+    return <RootPage />
+  }
 }
 
 export default function App() {
-  return <RouterProvider router={router} />
+  return (
+    <RecoilRoot>
+      <RouterProvider router={router} />
+    </RecoilRoot>
+  )
 }
