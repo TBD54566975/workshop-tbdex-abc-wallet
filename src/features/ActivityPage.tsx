@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Exchanges } from './Exchanges'
-import { ExchangesHeader } from './ExchangesHeader'
 import { Panel } from '../common/Panel'
 import { Spinner } from '../common/Spinner'
 import { TBD } from '../currency-utils'
@@ -30,6 +29,13 @@ export function ActivityPage() {
         <button className="w-full rounded-md bg-transparent px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-neutral-700 hover:bg-neutral-700/30">
           <div className="mt-2 text-sm font-semibold text-gray-200">TBDollars Balance</div>
           <div className="mt-2 mb-3 text-3xl font-semibold text-gray-200">{TBD(accountBalance).format()}</div>
+        </button>
+      </Panel>
+      <Panel width={'w-11/12'} height={'h-auto'}>
+        <h1 className='mb-4'>Credentials</h1>
+        <button className="w-1/4 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-neutral-700 hover:bg-neutral-700/30">
+          <div className="mt-2 text-lg font-semibold text-gray-200">TBDeveloper Credential</div>
+          <div className="mt-2 mb-3 text-sm font-semibold text-gray-200">@mistermoe</div>
         </button>
       </Panel>
       <Panel width={'w-11/12'} height={'h-auto'}>
