@@ -30,7 +30,7 @@ export function getSubunits(quoteAmountUnits: string, quoteCurrencyCode: string)
   let subunits = 0
   if(quoteCurrencyCode === 'BTC') {
      subunits = Number(quoteAmountUnits)*100_000_000
-    } else if(quoteCurrencyCode ==='USDC' || quoteCurrencyCode ==='USD') {
+    } else if(quoteCurrencyCode ==='USDC' || quoteCurrencyCode ==='USD' || quoteCurrencyCode ==='TBD') {
       subunits = Number(quoteAmountUnits)*100
     } else {
       console.log('unexpected currency code', quoteCurrencyCode)
