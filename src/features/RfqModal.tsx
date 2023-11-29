@@ -7,6 +7,8 @@ import { Panel } from '../common/Panel'
 import { createExchange } from '../apiUtils'
 import '../styles/date.css'
 import { getSubunits } from '../currency-utils'
+import { useRecoilState } from 'recoil'
+import { credentialsState, didState } from '../state'
 
 type RfqModalProps = {
   isOpen: boolean;
@@ -23,15 +25,22 @@ type RfqModalProps = {
  */
 export function RfqModal(props: RfqModalProps) {
   const [step, setStep] = useState(0)
-  const { offering, payinAmount, payoutAmount, btcAddress } = useContext(RfqContext)
+  const { offering, payinAmount, paymentDetails } = useContext(RfqContext)
+  const [credentials] = useRecoilState(credentialsState)
+  const [did] = useRecoilState(didState)
 
   if (!offering) return null
 
   const sendRfq = async () => { 
-    // TODO: create exchange here
-    await createExchange(offering.offeringId, payinAmount, payoutAmount, btcAddress)
+    await createExchange({
+      offeringId: offering.id, 
+      payinSubunits: getSubunits(payinAmount, offering.payinCurrency.currencyCode), 
+      payinMethod: { kind: offering.payinMethods[0].kind, paymentDetails: {} },
+      payoutMethod: { kind: offering.payoutMethods[0].kind, paymentDetails },
+      credentials, // todo: only submit required credentials,
+      didState: did
+    })
     props.onClose(true)
-    // await createExchange(accountId, offering.offeringId, quoteAmountSubunits, recipient, deliveryMethod, props.onClose)
   }
 
   const handleNext = async () => {
@@ -78,7 +87,7 @@ export function RfqModal(props: RfqModalProps) {
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
                 <Dialog.Panel
-                  className={'relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:mt-24 mt-24 w-80 h-128 lg:ml-72'}
+                  className={'relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:mt-24 mt-24 w-80 h-128'}
                 >
                   <div className='flex items-center justify-center text-white'>
                     <div className='text-sm'>{offering.description}</div>
