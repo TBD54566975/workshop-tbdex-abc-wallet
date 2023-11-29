@@ -45,8 +45,8 @@ export function Offerings() {
         aria-label="Directory"
       >
         <ul role="list" className="divide-y divide-transparent">
-          {offerings.map((offering) => (
-            <li key={`${offering}`} className="py-1">
+          {offerings.map((offering, ind) => (
+            <li key={ind} className="py-1">
               <button
                 className="w-full h-full rounded-lg px-4 py-1 hover:bg-neutral-600/20 flex"
                 onClick={() => handleModalOpen(offering)}

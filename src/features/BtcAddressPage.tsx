@@ -19,15 +19,18 @@ type RecipientBtcFormProps = {
  * @returns {JSX.Element} - Returns the RecipientBankForm component.
  */
 export function BtcAddressPage(props: RecipientBtcFormProps) {
-  const { btcAddress, setBtcAddress } = useContext(RfqContext)
-  const [recipientBtcForm, setRecipientBankForm] = useState({'btcAddress': btcAddress ? btcAddress.btcAddress : ''})
+  const formProperties = Object.fromEntries(Object.keys(props.schema['properties']).map(key => [key, undefined]))
+  const { setBtcAddress, setPaymentDetails } = useContext(RfqContext)
+  const [recipientBtcForm, setRecipientBankForm] = useState(formProperties)
   const [hasAttemptedNext, setHasAttemptedNext] = useState(false)
-  const isInvalidPayoutDetails = recipientBtcForm.btcAddress === ''
+  const isInvalidPayoutDetails = props.schema['required'].filter(requiredProperty => !recipientBtcForm[requiredProperty]).length > 0
 
   const handleNext = () => {
     setHasAttemptedNext(true)
     if (!isInvalidPayoutDetails) {
-      setBtcAddress(recipientBtcForm)
+      setPaymentDetails(recipientBtcForm)
+      //todo: fix this
+      setBtcAddress({btcAddress: recipientBtcForm.btcAddress ?? recipientBtcForm.address})
       props.onNext()
     }
   }
