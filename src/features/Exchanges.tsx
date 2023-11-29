@@ -7,6 +7,8 @@ import { Spinner } from '../common/Spinner'
 import { ToastContainer } from 'react-toastify'
 import { fetchExchanges } from '../apiUtils'
 import 'react-toastify/dist/ReactToastify.css'
+import { useRecoilState } from 'recoil'
+import { didState } from '../state'
 
 /**
  * This component displays a list of exchange transactions and provides the ability to view
@@ -18,6 +20,7 @@ export function Exchanges() {
   const [exchanges, setExchanges] = useState(undefined)
   const [selectedExchange, setSelectedExchange] = useState()
   const [exchangeModalOpen, setExchangeModalOpen] = useState(false)
+  const [did] = useRecoilState(didState)
   dayjs.locale('en')
 
   const contextClass = {
@@ -34,9 +37,8 @@ export function Exchanges() {
       // wait a little bit so we can render a pretty spinner animation
       await new Promise(resolve => setTimeout(() => resolve(undefined), 250)) 
       
-      const fetchedExchanges = await fetchExchanges()
-      console.log(fetchedExchanges)
-      setExchanges(fetchedExchanges)
+      const fetchedExchanges = await fetchExchanges(did)
+      setExchanges(fetchedExchanges.reverse())
     }
     init()
   }, [])
@@ -48,20 +50,17 @@ export function Exchanges() {
   useEffect(() => {
     // TODO: make sure fetching newly created exchanges work now that backend is removed
     setTimeout(async () => {
-      const fetchedExchanges = await fetchExchanges()
-      setExchanges(fetchedExchanges)
-    }, 11000)
+      const fetchedExchanges = await fetchExchanges(did)
+      setExchanges(fetchedExchanges.reverse()) // todo: add sorting to push completed to bottom
+    }, 4000)
   }, [exchanges])
 
   const handleStatusModalOpen = (exchange) => {
     setSelectedExchange(exchange)
     setExchangeModalOpen(true)
   }
-  const handleStatusModalClose = (hasSubmitted: boolean) => {
-    // await new Promise((resolve) => setTimeout(() => resolve(undefined), 250))
+  const handleStatusModalClose = () => {
     setExchangeModalOpen(false)
-    // console.log('updating the balance')
-    // await fetchAccountBalance(accountId)
   }
 
   if (!exchanges) {
@@ -87,13 +86,13 @@ export function Exchanges() {
             <div className="w-1/5 text-xs font-medium leading-6 text-neutral-100 text-right mr-2">Amount</div>
           </div>
         </div>
-        {!exchanges || exchanges?.length === 0 ? (
-          <div className="min-w-0 truncate text-center pl-3">
+        {exchanges.length === 0 ? (
+          <div className="min-w-0 truncate text-center">
             <p className="text-xs font-medium leading-6 text-neutral-100 mt-3">No transactions found</p>
             <p className="truncate text-xs leading-5 text-gray-500">Request an exchange.</p>
           </div>
         ) : (
-          exchanges?.map((exchange, index) => (
+          exchanges.map((exchange, index) => (
             <ExchangeItem key={index} exchange={exchange} handleStatusModalOpen={handleStatusModalOpen}/>
         )))}
 

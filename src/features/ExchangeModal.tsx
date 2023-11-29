@@ -4,10 +4,11 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { renderActionButtons, renderStatusInfo } from './ExchangeModalUtils'
-import { TBD, money, BTC, removeTrailingZeros } from '../currency-utils'
+import { money, BTC, removeTrailingZeros } from '../currency-utils'
+import { type ClientExchange } from '../apiUtils'
 
 type ExchangeModalProps = {
-  exchange: any
+  exchange: ClientExchange
   isOpen: boolean
   onClose: (hasSubmitted: boolean) => void
 }
@@ -50,7 +51,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className='relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:mt-24 mt-24 w-80 h-128 lg:ml-72'>
+                <Dialog.Panel className='relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:mt-24 mt-24 w-80 h-128'>
                   <button className="absolute top-5 right-5 text-white hover:text-gray-300 focus:outline-none" onClick={() => { props.onClose(true) }}>
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
@@ -58,7 +59,6 @@ export function ExchangeModal(props: ExchangeModalProps) {
                     <div className="flex justify-center items-center w-12 h-12 mt-1 rounded-full bg-indigo-600 text-white text-sm font-semibold mb-4">
                       $
                     </div>
-                    {/* <p className="text-sm font-semibold text-white">{props.exchange.firstName} {props.exchange.lastName}</p> */}
                     <p className="text-xs text-gray-500 mt-1">Exchange from TBD to BTC</p>
                     <div className="mt-8 mb-1 text-3xl font-semibold text-gray-200">
                       {removeTrailingZeros(money(props.exchange.payinAmount).format())} TBD
@@ -72,10 +72,6 @@ export function ExchangeModal(props: ExchangeModalProps) {
                         <div className="w-1/2 text-left text-gray-500">Amount</div>
                         <div className="w-1/2 text-right">{removeTrailingZeros(BTC(props.exchange.payoutAmount).format())} BTC</div>
                       </div>
-                      {/* <div className="flex mb-2">
-                        <div className="w-1/2 text-left text-gray-500">Delivery method</div>
-                        <div className="w-1/2 text-right">{props.exchange.deliveryMethod.replace(/^MOMO_|BANK_/, '')}</div>
-                      </div> */}
                       <div className="flex mb-2">
                         <div className="w-1/2 text-left text-gray-500">To</div>
                         <div className="w-1/2 text-right">{'github'} {'user'}</div>
@@ -84,7 +80,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
                         <div className="w-1/2 text-left text-gray-500">From</div>
                         <div className="w-1/2 text-right">{'github'} {'user'}</div>
                       </div>
-                      {props.exchange.status.value === 110 && (
+                      {props.exchange.status.value === 110 && props.exchange.expirationTime && (
                         <div className="flex mb-2">
                           <div className="w-1/2 text-left text-gray-500">Expires in</div>
                           <div className="w-1/2 text-right">{dayjs(props.exchange.expirationTime).fromNow(true)}</div>
