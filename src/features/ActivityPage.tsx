@@ -6,8 +6,9 @@ import { TBD } from '../currency-utils'
 import { OfferingsHeader } from './OfferingsHeader'
 import { Offerings } from './Offerings'
 import { useRecoilState } from 'recoil'
-import { credentialsState } from '../state'
+import { credentialsState, didState } from '../state'
 import { jwtDecode } from 'jwt-decode'
+import { addTBDollars, checkTbdDollars } from '../apiUtils'
 
 /**
  * This component displays the activity page, including account balance and exchange information.
@@ -24,24 +25,33 @@ function renderTBDeveloperCredential(credential: string) {
   }
 }
 export function ActivityPage() {
-  const [accountBalance, setAccountBalance] = useState(undefined)
+  const [accountBalance, setAccountBalance] = useState(null)
   const [credentials] = useRecoilState(credentialsState)
+  const [did] = useRecoilState(didState)
 
   useEffect(() => {
     const init = async () => {
-      setAccountBalance(105)
+      const res = await checkTbdDollars(did)
+      setAccountBalance(res.currentBalance)
     }
-    init()
+    void init()
   }, [])
 
-  if (!accountBalance) return (<Spinner />)
+  async function addFunds() {
+    setAccountBalance(null)
+    const res = await addTBDollars(did)
+    if (res.balance) {
+      setAccountBalance(res.balance)
+    }
+  }
 
   return (
     <>
       <Panel width={'w-11/12'} height={'h-auto'}>
         <div className="text-center w-full rounded-md bg-transparent px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-neutral-700">
           <h1 className="mt-2 text-sm font-semibold text-gray-200">TBDollars Balance</h1>
-          <div className="mt-2 mb-3 text-3xl font-semibold text-gray-200">{TBD(accountBalance).format()}</div>
+          <div className="mt-2 mb-3 text-3xl font-semibold text-gray-200">{accountBalance !== null ? TBD(accountBalance).format() : <Spinner />}</div>
+          <button className="rounded-md bg-indigo-600 p-2 text-white" onClick={addFunds}>Add $</button>
         </div>
       </Panel>
       <Panel width={'w-11/12'} height={'h-auto'}>

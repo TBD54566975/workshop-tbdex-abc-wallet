@@ -17,7 +17,7 @@
     "@rjsf/utils": "5.9.0",
     "@rjsf/validator-ajv8": "5.9.0",
     "@tailwindcss/forms": "0.5.3",
-    "@tbdex/http-client": "0.21.0",
+    "@tbdex/http-client": "0.22.1",
     "@web5/common": "0.2.1",
     "@web5/crypto": "0.2.2",
     "@web5/dids": "0.2.2",
