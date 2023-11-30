@@ -6,7 +6,6 @@ import { Spinner } from '../common/Spinner'
 import { TBD } from '../currency-utils'
 
 export function Balance() {
-  // const [accountBalance, setAccountBalance] = useState(undefined)
   const [did] = useRecoilState(didState)
   const [accountBalance, setAccountBalance] = useRecoilState(balanceState)
 
