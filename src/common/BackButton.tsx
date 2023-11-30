@@ -11,7 +11,7 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline'
  */
 export function BackButton({ onBack }) {
   return (
-    <button className="absolute top-5 left-5 mt-2 text-white hover:text-gray-300 focus:outline-none" onClick={onBack}>
+    <button className="absolute top-5 left-5 text-white hover:text-gray-300 focus:outline-none" onClick={onBack}>
       <ArrowLeftIcon className="h-5 w-5" aria-hidden="true" />
     </button>
   )

@@ -13,10 +13,6 @@ export const RfqContext = React.createContext({
   setPayinAmount: undefined,
   payoutAmount: undefined, 
   setPayoutAmount: undefined, 
-  vcs: undefined,
-  setVcs: undefined,
-  btcAddress: undefined,
-  setBtcAddress: undefined,
   paymentDetails: undefined,
   setPaymentDetails: undefined
 })
@@ -26,9 +22,6 @@ export const RfqProvider = ({ children, offering }) => {
   const [payoutAmount, setPayoutAmount] = useState('')
   const [paymentDetails, setPaymentDetails] = useState('')
 
-  const [vcs, setVcs] = useState([])
-  const [btcAddress, setBtcAddress] = useState()
-
   return (
     <RfqContext.Provider
       value={{
@@ -37,10 +30,6 @@ export const RfqProvider = ({ children, offering }) => {
         setPayinAmount,
         payoutAmount,
         setPayoutAmount,
-        vcs,
-        setVcs,
-        btcAddress,
-        setBtcAddress,
         paymentDetails,
         setPaymentDetails
       }}

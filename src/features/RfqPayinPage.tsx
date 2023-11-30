@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { PayinAmountInput } from './PayinAmountInput'
+import { PayinAmountInput } from './RfqPayinAmountInput'
 import { RfqContext } from './RfqContext'
 import { NextButton } from '../common/NextButton'
 import { TBD } from '../currency-utils'
@@ -8,21 +8,16 @@ type SetQuoteAmountFormProps = {
   onNext: () => void;
 }
 
-/**
- * This component represents a form for setting the quote amount for an exchange.
- *
- * @param {Function} props.onNext - A function to proceed to the next step.
- * @returns {JSX.Element} - Returns the SetQuoteAmountForm component.
- */
 export function PayinPage(props: SetQuoteAmountFormProps) {
   const {offering, payinAmount, setPayinAmount, payoutAmount, setPayoutAmount} = useContext(RfqContext)
   const [currentPayoutAmount, setCurrentPayoutAmount] = useState(payoutAmount)
   const [currentPayinAmount, setCurrentPayinAmount] = useState(payinAmount)
   const [hasAttemptedNext, setHasAttemptedNext] = useState(false)
 
-  const minPayinAmount = offering.payinCurrency.minSubunit ? TBD(offering.payinCurrency.minSubunit).value : -1
-  const maxPayinAmount = offering.payinCurrency.maxSubunit ? TBD(offering.payinCurrency.maxSubunit).value : -1
+  const minPayinAmount = offering.payinCurrency.minSubunit ? TBD(offering.payinCurrency.minSubunit).value : 0.01
+  const maxPayinAmount = offering.payinCurrency.maxSubunit ? TBD(offering.payinCurrency.maxSubunit).value : 5
 
+  console.log(offering)
   const isWithinMinMax = (amount: string, minQuoteAmount: number, maxQuoteAmount: number) => {
     const parsedAmount = parseFloat(amount)
 
@@ -70,7 +65,7 @@ export function PayinPage(props: SetQuoteAmountFormProps) {
         {(currentPayoutAmount === '' && hasAttemptedNext) && (
           <p className="text-sm text-red-600 mb-2">Enter an amount in {offering.payinCurrency.currencyCode}</p>
         )}
-        <NextButton onNext={handleNext} />
+        <NextButton disabled={false} onNext={handleNext} />
       </div>
     </>
   )

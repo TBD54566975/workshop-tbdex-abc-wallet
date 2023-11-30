@@ -27,7 +27,7 @@ export function Balance() {
         <div className='mt-4'><Spinner /></div>
       ) : accountBalance === null ? (
         <div className="min-w-0 truncate text-center">
-          <p className="text-xs font-medium leading-6 text-neutral-100 mt-3">Failed to load</p>
+          <h3 className="text-xs font-medium leading-6 text-neutral-100 mt-3">Failed to load</h3>
           <p className="truncate text-xs leading-5 text-gray-500">There was an error trying to load your balance.</p>
         </div>
       ) : (

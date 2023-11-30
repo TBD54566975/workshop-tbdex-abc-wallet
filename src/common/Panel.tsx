@@ -18,7 +18,9 @@ export function Panel({ children, width, height }) {
           <div className={width}>
             <div className={`overflow-hidden bg-neutral-800 shadow sm:rounded-lg rounded-md relative ${height}`}>
               <div className="px-6 py-6 sm:px-6 overflow-hidden h-full">
-                {children}
+                <div className="overflow-auto max-h-[calc(70vh-4rem)] no-scrollbar">
+                  {children}
+                </div>
               </div>
             </div>
           </div>
