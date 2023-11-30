@@ -49,11 +49,12 @@ export function Exchanges() {
   //      which is currently set to 11 seconds
   useEffect(() => {
     // TODO: make sure fetching newly created exchanges work now that backend is removed
-    setTimeout(async () => {
+    const pollIntervalId = setInterval(async () => {
       const fetchedExchanges = await fetchExchanges(did)
       setExchanges(fetchedExchanges.reverse()) // todo: add sorting to push completed to bottom
-    }, 4000)
-  }, [exchanges])
+    }, 5000)
+    return () => clearInterval(pollIntervalId)
+  }, [])
 
   const handleStatusModalOpen = (exchange) => {
     setSelectedExchange(exchange)
