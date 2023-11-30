@@ -1,0 +1,13 @@
+server {
+  listen       ${NGINX_PORT};
+  listen  [::]:${NGINX_PORT};
+  server_name  localhost;
+
+  access_log  /tmp/host.access.log  main;
+
+  location / {
+      root   /usr/share/nginx/html;
+      index  index.html index.htm;
+      try_files $uri $uri/ /index.html;
+  }
+}
