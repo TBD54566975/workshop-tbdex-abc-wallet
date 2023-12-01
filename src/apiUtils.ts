@@ -70,7 +70,7 @@ export async function getTBDollars(didState, topup?: boolean) {
         'Authorization': 'Bearer ' + token
       }
     })
-    return await res.json()
+    return (await res.json()).balance / 100
   } catch (e) {
     throw new Error(e)
   }
