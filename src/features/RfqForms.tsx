@@ -1,6 +1,6 @@
-import { BtcAddressPage } from './BtcAddressPage'
-import { PayinPage } from './PayinPage'
-import { ReviewPage } from './ReviewPage'
+import { RfqAddressPage } from './RfqAddressPage'
+import { PayinPage } from './RfqPayinPage'
+import { ReviewPage } from './RfqReviewPage'
 
 export enum RfqFormIds {
   Payin = 'payin',
@@ -28,7 +28,7 @@ export const getRfqForms = (offering, handleNext, handleBack) => {
     {
       title: 'What\'s your BTC address?',
       component: (
-        <BtcAddressPage
+        <RfqAddressPage
           schema={offering.payoutMethods[0].requiredPaymentDetails}
           onBack={handleBack}
           onNext={handleNext}

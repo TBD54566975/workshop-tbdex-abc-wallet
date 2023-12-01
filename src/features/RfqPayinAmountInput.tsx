@@ -13,24 +13,8 @@ type PayinAmountInputProps = {
   setCurrentPayoutAmount: (value: string) => void;
 }
 
-/**
- * This component represents an input form for selecting and displaying quote amounts.
- *
- * @param {number} props.minQuoteAmount - The minimum allowed quote amount.
- * @param {number} props.maxQuoteAmount - The maximum allowed quote amount.
- * @param {boolean} props.isAmountValid - Indicates whether the entered amount is valid.
- * @param {Function} props.validateAmount - A function to validate the entered amount.
- * @param {string} props.currentBaseAmount - The current base amount.
- * @param {Function} props.setCurrentBaseAmount - A function to set the current base amount.
- * @param {string} props.currentQuoteAmount - The current quote amount.
- * @param {Function} props.setCurrentQuoteAmount - A function to set the current quote amount.
- * @param {Object} props.selectedOffering - The selected offering object.
- * @param {Function} props.setSelectedOffering - A function to set the selected offering.
- * @returns {JSX.Element} - Returns the QuoteAmountInput component.
- */
 export function PayinAmountInput(props: PayinAmountInputProps) {
   const { offering } = useContext(RfqContext)
-  // const [selectedCurrency, setSelectedCurrency] = useState(props.selectedOffering.quoteCurrency.currencyCode)
 
   const payinCurrency = offering.payinCurrency.currencyCode
   const payoutCurrency = offering.payoutCurrency.currencyCode
@@ -55,45 +39,43 @@ export function PayinAmountInput(props: PayinAmountInputProps) {
             ? `Maximum order is ${props.maxPayinAmount} ${payinCurrency}`
             : null}
         </p>
+        <label htmlFor="payinAmount" className="block text-xs leading-6 pl-3 mt-3 text-gray-300">You Send</label>
         <div className="flex items-center">
           <input
             type="text"
             className="block w-full text-2xl border-0 text-indigo-600 bg-transparent rounded-md focus:text-indigo-600 placeholder:text-gray-400 focus:ring-transparent sm:leading-6"
             placeholder="0.00"
-            aria-describedby="price-currency"
+            id="payinAmount"
+            name="payinAmount"
             value={props.currentPayinAmount}
             onChange={(e) => handlePayinAmountChange(e.target.value)}
+            autoComplete='off'
           />
-          <div className='mr-10 pr-1 mb-1 text-gray-400 text-xl'>{payinCurrency}</div>
+          <p className='pr-1 mb-1 text-gray-400 text-xl'>{payinCurrency}</p>
         </div>        
-        <label className="block text-xs leading-6 pl-3 -mt-3 text-gray-300">{'You Send'}</label>
       </div>
 
       <div className="relative mt-3 rounded-md shadow-sm">
+        <label className="block text-xs leading-6 pl-3 mt-1 text-gray-300">They get</label>{' '}
         <div className="flex items-center">
           <input
             type="text"
             className="block w-full text-2xl border-0 py-1.5 text-neutral-200 bg-transparent rounded-md placeholder:text-gray-400 focus:ring-transparent sm:leading-6"
             placeholder="0.00"
-            aria-describedby="price-currency"
+            id="payoutAmount"
+            name="payoutAmount"
             value={formatUnits(props.currentPayoutAmount, 8)}
             readOnly
           />
-          <div className='mr-10 pr-1 mb-1 text-gray-400 text-xl'>{payoutCurrency}</div>
+          <p className='pr-1 mb-1 text-gray-400 text-xl'>{payoutCurrency}</p>
         </div>   
       </div>
-      <label className="block text-xs leading-6 pl-3 -mt-1 text-gray-300"> {'They get'} </label>{' '}
 
-      <div className="grid grid-cols-2 gap-0.5 mt-5 border border-gray-500 rounded-md p-3 text-xs">
-        <div className="text-left text-gray-400">Est. rate</div>
-        <div className="text-right w-[130%] ml-[-30%] text-gray-400">{getExchangeRate(offering.payoutUnitsPerPayinUnit, payinCurrency, payoutCurrency)}</div>
-
-        <div className="text-left text-gray-400 mt-2">Service fee</div>
-        {offering.feeSubunits ? (
-          <div className="text-right text-gray-400 mt-2">{fromCents(offering.feeSubunits).format()}</div>
-        ) : (
-          <div className="text-right text-gray-400 mt-2">0.00 {payinCurrency}</div>
-        )}     
+      <div className="grid grid-cols-2 gap-0.5 mt-5 rounded-md p-3 text-xs">
+        <p className="text-left text-gray-400">Est. rate</p>
+        <p className="text-right w-[130%] ml-[-30%] text-gray-400">{getExchangeRate(offering.payoutUnitsPerPayinUnit, payinCurrency, payoutCurrency)}</p>
+        <p className="text-left text-gray-400 mt-2">Service fee</p>
+        <p className="text-right text-gray-400 mt-2">{offering.feeSubunits ? fromCents(offering.feeSubunits).format() : `0.00 ${payinCurrency}`}</p> 
       </div>
     </div>
   )

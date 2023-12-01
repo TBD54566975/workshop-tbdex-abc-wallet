@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useRef } from 'react'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { RfqModal } from './RfqModal.tsx'
 import { RfqProvider } from './RfqContext.tsx'
@@ -9,41 +8,43 @@ import bitcoinIcon from '../assets/bitcoin.svg'
 
 export function Offerings() {
   const [offerings, setOfferings] = useState(undefined)
-  const [rfqModalOpen, setRfqModalOpen] = useState(false)
   const [selectedOffering, setSelectedOffering] = useState<string | undefined>()
-  const navigate = useNavigate()
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setOfferings(await fetchOfferings())
+      try {
+        setOfferings(await fetchOfferings())
+      } catch (e) {
+        setOfferings(null)
+      }
     }
     fetchData()
   }, [])
 
   const handleModalOpen = (offering) => {
     setSelectedOffering(offering)
-    setRfqModalOpen(true)
+    dialogRef.current?.showModal()
   }
 
-  const handleModalClose = (hasSubmitted: boolean) => {
-    setRfqModalOpen(false)
-    if (hasSubmitted) {
-      // TODO: create exchange
-      navigate('/')
-    } else {
-      navigate('/')
-    }
+  const handleModalClose = () => {
+    setSelectedOffering(undefined)
   }
 
-  if (!offerings) return <Spinner />
+  if (offerings === undefined) return <Spinner />
+
+  if (offerings === null) {
+    return (
+      <div className="min-w-0 truncate text-center">
+        <h3 className="text-xs font-medium leading-6 text-neutral-100 mt-3">Failed to load</h3>
+        <p className="truncate text-xs leading-5 text-gray-500">There was an error trying to loading offerings.</p>
+      </div>
+    )
+  } 
+
 
   return (
     <>
-      <div
-        className="overflow-auto max-h-[calc(100vh-4rem)] pb-4"
-        aria-label="Directory"
-      >
         <ul role="list" className="divide-y divide-transparent">
           {offerings.map((offering, ind) => (
             <li key={ind} className="py-1">
@@ -76,16 +77,19 @@ export function Offerings() {
             </li>
           ))}
         </ul>
-      </div>
 
-      {rfqModalOpen && selectedOffering && (
-        <RfqProvider offering={selectedOffering}>
-          <RfqModal
-            isOpen={rfqModalOpen}
-            onClose={handleModalClose}
-          />
-        </RfqProvider>
-      )}
+        <dialog ref={dialogRef} className='fixed bg-transparent' onClick={(e) => {
+          if (e.target === dialogRef.current) {
+            dialogRef.current.close()
+          }
+        }} onClose={handleModalClose}>
+          { selectedOffering && (
+            <RfqProvider offering={selectedOffering}>
+              <RfqModal onClose={handleModalClose}/>
+            </RfqProvider>
+          )}
+        </dialog>
+
     </>
   )
 }

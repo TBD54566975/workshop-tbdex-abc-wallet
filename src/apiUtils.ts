@@ -1,27 +1,18 @@
 import { PortableDid } from '@web5/dids'
-import { fromCents } from './currency-utils'
-import { TbdexHttpClient, Rfq, Message, SelectedPaymentMethod, Order } from '@tbdex/http-client'
-import { JwtHeader, JwtPayload } from 'jwt-decode'
+import { fromCents, fromSats } from './currency-utils'
+import { TbdexHttpClient, Rfq, SelectedPaymentMethod, Order } from '@tbdex/http-client'
+import { JwtHeader, JwtPayload, jwtDecode } from 'jwt-decode'
 import { Convert } from '@web5/common'
 import { Ed25519, Jose } from '@web5/crypto'
-import { didState } from './state'
 
-const samplePfiDid = 'did:dht:rriy6zgrhh9c53kbbifkamhmfi4y8ep8sibxsri9hj9q8wx6f1ao'
+const samplePfiDid = 'did:dht:5gpofcggqett54keipcbxtm8k887tgnx4c8n4sec65jcf18yb48y'
 
 
-export async function checkTbdDollars(didState) {
-  return await createTBDollarsRequest(didState, '/tbdollars?check=true')
-}
-
-export async function addTBDollars(didState) {
-  return await createTBDollarsRequest(didState, '/tbdollars')
-}
-
-async function createTBDollarsRequest(didState, reqEndpoint) {
+export async function getTBDollars(didState, topup?: boolean) {
   try {
     const pfiEndpoint = await TbdexHttpClient.getPfiServiceEndpoint(samplePfiDid)
     const token = await createJwtToken(didState)
-    const res = await fetch(pfiEndpoint + reqEndpoint, {
+    const res = await fetch(pfiEndpoint + '/tbdollars' + (topup ? '?topup=true' : ''), {
       headers: {
         'Authorization': 'Bearer ' + token
       }
@@ -111,26 +102,29 @@ export async function createOrder(opts: {
   await message.sign(opts.didState)
   const response = await TbdexHttpClient.sendMessage({ message })
   console.log(response)
+  return response
 }
 
-export async function fetchExchanges(didState) {
+export async function fetchExchanges(didState, vc?) {
   const response = await TbdexHttpClient.getExchanges({
     pfiDid: samplePfiDid,
-    did: didState,
+    did: didState
   })
   console.log(response.data)
   const exchanges = response.data.map(exchange => {
     const latestMessage = exchange[exchange.length - 1]
-    const status = generateExchangeStatusValues(latestMessage.metadata.kind)
-    // todo: fix this
+    const rfqMessage = exchange.find(message => message.kind === 'rfq')
+    const quoteMessage = exchange.find(message => message.kind === 'quote')
+    const status = generateExchangeStatusValues(latestMessage)
     return {
       id: latestMessage.exchangeId,
-      payinAmount: fromCents(latestMessage.data['payin']?.['amountSubunits'] + latestMessage.data['payin']?.['feeSubunits'] || latestMessage.data['payinSubunits']),
-      payoutAmount: fromCents(latestMessage.data['payout']?.['amountSubunits'] || 100),
-      btcAddress: latestMessage.data['payoutMethod'].paymentDetails.address,
+      payinAmount: fromCents(quoteMessage?.data['payin']?.['amountSubunits'] + quoteMessage?.data['payin']?.['feeSubunits'] || rfqMessage.data['payinSubunits']),
+      payoutAmount: fromSats(quoteMessage?.data['payout']?.['amountSubunits'] || null),
       status,
-      createdTime: latestMessage.createdAt,
-      expirationTime: latestMessage.data['expiresAt'] ?? null
+      createdTime: rfqMessage.createdAt,
+      ...latestMessage.kind === 'quote' && {expirationTime: quoteMessage.data['expiresAt'] ?? null},
+      from: (vc ? '@' + vc.credentialSubject.username : 'You'),
+      to: rfqMessage.data['payoutMethod']?.paymentDetails.address,
     }
   })
   return exchanges
@@ -140,45 +134,32 @@ export type ClientExchange = {
   id: string;
   payinAmount: string;
   payoutAmount: string;
-  btcAddress: string;
-  status: { name: string; value: number },
+  status: 'rfq' | 'quote' | 'order' | 'orderstatus' | 'failed' | 'expired' | 'completed',
   createdTime: string,
-  expirationTime?: string
+  expirationTime?: string,
+  from: string,
+  to: string
 }
 
-function generateExchangeStatusValues(exchangeKind, isExpired?, isFailed?) {
-  //todo: fix these
-  switch (exchangeKind) {
-    case 'rfq' :
-      return { 
-        name: 'EX_REQUESTED', 
-        value: 110
-      }
-    case 'quote' :
-      return {
-        name: 'EX_QUOTED', 
-        value: 100
-      }
-    case 'order' :
-      return {
-        name: 'EX_SUBMITTED', 
-        value: 120
-      }
-    case 'orderstatus' :
-      return {
-        name: 'EX_PROCESSING', 
-        value: 130
-      }
-    case 'close' :
-      return {
-        name: isExpired ? 'EX_EXPIRED' : isFailed ? 'EX_FAILED' : 'EX_COMPLETED', 
-        value: isExpired ? 300 : isFailed ? 310 : 200
-      }
-    default :
-      return {
-        name: 'Unkown', 
-        value: null
-      }
+function generateExchangeStatusValues(exchange) {
+  if (exchange.kind === 'close') {
+    if (exchange.data.reason.toLowerCase().includes('completed')) {
+      return 'completed'
+    } else if (exchange.data.reason.toLowerCase().includes('expired')) {
+      return 'expired'
+    } else {
+      return 'failed'
+    }
+  }
+  return exchange.kind
+}
+
+export function renderTBDeveloperCredential(credentialJwt: string) {
+  const vc = jwtDecode(credentialJwt)['vc']
+  return {
+    title: 'TBDeveloper Credential',
+    userName: '@' + vc.credentialSubject.username,
+    issuanceDate: new Date(vc.issuanceDate).toLocaleDateString(undefined, {dateStyle: 'medium'}),
   }
 }
 

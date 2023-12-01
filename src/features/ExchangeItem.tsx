@@ -25,7 +25,7 @@ export function ExchangeItem(props: ExchangeItemProps) {
   useEffect(() => {
     if (statusValue) {
       toast(getStatusString(props.exchange), {
-        toastId: props.exchange.id + props.exchange.status.value,
+        toastId: props.exchange.id + '_' + Date.now(),
         position: 'top-left',
         autoClose: 3000,
         hideProgressBar: true,
@@ -36,8 +36,8 @@ export function ExchangeItem(props: ExchangeItemProps) {
         theme: 'dark',
       })
     }
-    setStatusValue(props.exchange.status.value)
-  }, [props.exchange.status.value])
+    setStatusValue(props.exchange.status)
+  }, [props.exchange.status])
 
   return (
     <>
@@ -51,16 +51,16 @@ export function ExchangeItem(props: ExchangeItemProps) {
               <p className="truncate text-xs leading-5 text-gray-500">{getStatusString(props.exchange)}</p>
             </div>
           </div>
-          { props.exchange.status.value === 110 ? (
+          { props.exchange.status === 'quote' ? (
             <>
               <div className="w-1/5 flex items-center justify-end">
                 <div className="h-auto w-auto mt-1.5 p-2 rounded-lg bg-neutral-700 text-white text-xs flex items-center justify-center">Review</div>
               </div>
             </>
-          ) : props.exchange.status.value <= 310 ? (
+          ) : props.exchange.status === 'completed' || props.exchange.status === 'orderstatus' ? (
             <>
               <div className="w-1/5 text-xs font-medium leading-6 text-right pt-2 mr-1 text-gray-500">
-                {removeTrailingZeros(BTC(props.exchange.payinAmount).format())}
+                {removeTrailingZeros(BTC(props.exchange.payoutAmount).format())}
               </div>
             </>
           ) : 
@@ -73,20 +73,20 @@ export function ExchangeItem(props: ExchangeItemProps) {
 }
 
 const getStatusString = (exchange) => {
-  switch (exchange.status.name) {
-    case 'EX_PROCESSING':
-      return 'Payment processing...'
-    case 'EX_REQUESTED':
+  switch (exchange.status) {
+    case 'rfq':
       return `Requested ${money(exchange.payinAmount).format()} TBD`
-    case 'EX_QUOTED':
+    case 'quote':
       return `Quoted ${money(exchange.payinAmount).format()} TBD`
-    case 'EX_SUBMITTED':
+    case 'order':
       return `Payment for ${money(exchange.payinAmount).format()} TBD submitted`
-    case 'EX_COMPLETED':
+    case 'orderstatus':
+      return `Payment processing for ${money(exchange.payinAmount).format()} TBD...`
+    case 'completed':
       return `Sent ${money(exchange.payinAmount).format()} TBD`
-    case 'EX_EXPIRED':
-      return `Quote for ${money(exchange.payinAmount).format()} TBD expired`
-    case 'EX_FAILED':
+    case 'expired':
+      return `Quote for ${money(exchange.payinAmount).format()} TBD expired or failed`
+    case 'failed':
       return `Payment for ${money(exchange.payinAmount).format()} TBD failed`
     default:
       return 'Unknown status'
