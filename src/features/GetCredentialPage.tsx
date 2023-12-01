@@ -36,9 +36,12 @@ export function GetCredentialPage() {
       try {
         const host = new URL(popup.location.href)
         vcRequestToken = host.searchParams.get('code')
+        if (!vcRequestToken) {
+          return
+        }
+        
         clearInterval(intervalRef)
         const vcRequestJwt = await createVcRequestJwt(did, vcRequestToken)
-        
         const credentialResponse = await fetch(`${issuerHost}/credential`, {
           headers: {
             'Authorization': `Bearer ${vcRequestJwt}`
