@@ -12,14 +12,21 @@ export function Balance() {
   useEffect(() => {
     const init = async () => {
       try {
-        const res = await getTBDollars(did)
-        setAccountBalance(res.balance)
+        const balance = await getTBDollars(did)
+        setAccountBalance(balance)
       } catch {
         setAccountBalance(null)
       }
     }
     void init()
   }, [])
+
+  async function addFunds() {
+    const balance = await getTBDollars(did, true)
+    if (balance) {
+      setAccountBalance(balance)
+    }
+  }
   
   return (
     <>
@@ -33,7 +40,7 @@ export function Balance() {
       ) : (
         <>
           <div className="mt-2 mb-3 text-3xl font-semibold text-gray-200">{TBD(accountBalance).format()}</div>
-          <button className='rounded-md bg-indigo-600 p-2 text-white' onClick={() => getTBDollars(did, true)}>Add funds</button>
+          <button className='rounded-md bg-indigo-600 p-2 text-white' onClick={addFunds}>Add funds</button>
         </>
       )}
     </>
