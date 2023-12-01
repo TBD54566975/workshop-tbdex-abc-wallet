@@ -6,7 +6,7 @@ import { Convert } from '@web5/common'
 import { Ed25519, Jose } from '@web5/crypto'
 import { SendOrderOptions, SendRfqOptions, generateExchangeStatusValues, sendOrder, sendRFQ } from './messageUtils'
 
-const samplePfiDid = 'did:dht:5gpofcggqett54keipcbxtm8k887tgnx4c8n4sec65jcf18yb48y'
+const samplePfiDid = import.meta.env['VITE_PFI_DID']
 
 export type ClientExchange = {
   id: string;

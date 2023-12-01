@@ -8,6 +8,7 @@ import { PortableDid } from '@web5/dids'
 import { FaGithub } from 'react-icons/fa'
 import { Convert } from '@web5/common'
 
+
 export function GetCredentialPage() {
   const [did] = useRecoilState(didState)
   const [credentials, setCredentials] = useRecoilState(credentialsState)
@@ -28,25 +29,30 @@ export function GetCredentialPage() {
     )
 
     let vcRequestToken: string
+    const issuerHost = import.meta.env['VITE_ISSUER_HOST']
+    console.log(issuerHost)
 
     const intervalRef = setInterval(async () => {
       try {
         const host = new URL(popup.location.href)
         vcRequestToken = host.searchParams.get('code')
-        
         clearInterval(intervalRef)
-
         const vcRequestJwt = await createVcRequestJwt(did, vcRequestToken)
         
-        const credentialResponse = await fetch(`http://localhost:9000/credential`, {
+        const credentialResponse = await fetch(`${issuerHost}/credential`, {
           headers: {
             'Authorization': `Bearer ${vcRequestJwt}`
           }
         })
 
+        if (credentialResponse.ok) {
+          const { credential } = await credentialResponse.json()
+          setCredentials([...credentials, credential])
+        } else {
+          console.error(`Failed to get VC. Error: (${credentialResponse.status}) ${await credentialResponse.text()}`)
+        }
+        
         popup.close()
-        const { credential } = await credentialResponse.json()
-        setCredentials([...credentials, credential])
       } catch(e) {
         console.log('waiting for token....')
       }

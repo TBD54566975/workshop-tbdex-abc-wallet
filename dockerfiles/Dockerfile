@@ -3,7 +3,7 @@ FROM node:20.5-buster AS build
 WORKDIR /wallet
 
 COPY src ./src
-COPY .eslintrc.cjs index.html package.json tailwind.config.js tsconfig.json tsconfig.node.json vite.config.ts ./
+COPY .eslintrc.cjs index.html package.json package-lock.json .env.production tailwind.config.js tsconfig.json tsconfig.node.json vite.config.ts ./
 
 RUN npm install
 RUN npm run build
