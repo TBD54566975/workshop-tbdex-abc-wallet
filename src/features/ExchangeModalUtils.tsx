@@ -3,12 +3,13 @@ import { TBD } from '../currency-utils'
 import { useState } from 'react'
 import { createOrder, getTBDollars } from '../apiUtils'
 import { useRecoilState } from 'recoil'
-import { balanceState } from '../state'
+import { didState as recoilDidState, balanceState } from '../state'
 
 export const renderActionButtons = (amount, exchangeId, onClose, didState) => {
   const [isUpdating, setIsUpdating] = useState(false)
+  const [did] = useRecoilState(recoilDidState)
   const [accountBalance, setAccountBalance] = useRecoilState(balanceState)
-  const [did] = useRecoilState(didState)
+
 
   const handleUpdateExchange = async (action) => {
     if (action === 'accept') {
