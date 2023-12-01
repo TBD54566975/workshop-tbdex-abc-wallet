@@ -9,7 +9,7 @@ export function ActivityPage() {
     <>
       <h1 className="sr-only">ABC Wallet</h1>
       <Panel width={'w-11/12'} height={'h-auto'}>
-        <div className="text-center w-full rounded-md bg-transparent px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-neutral-700">
+        <div className="text-center w-full rounded-md bg-transparent px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm">
           <h2 className="mt-2 text-sm font-semibold text-gray-200">TBDollars Balance</h2>
           <Balance />
         </div>
