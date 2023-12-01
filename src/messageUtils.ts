@@ -43,6 +43,15 @@ export async function sendOrder(opts: SendOrderOptions) {
   return await TbdexHttpClient.sendMessage({ message })
 }
 
+export function renderOrderStatus (exchange) {
+  const status = generateExchangeStatusValues(exchange)
+  switch (status) {
+    /* <--- Add code here ---> */
+    default:
+      return 'Unknown status'
+  }
+}
+
 export function generateExchangeStatusValues(exchange) {
   if (exchange.kind === 'close') {
     if (exchange.data.reason.toLowerCase().includes('completed')) {
@@ -54,13 +63,4 @@ export function generateExchangeStatusValues(exchange) {
     }
   }
   return exchange.kind
-}
-
-export function renderOrderStatus (exchange) {
-  const status = generateExchangeStatusValues(exchange)
-  switch (status) {
-    /* <--- Add code here ---> */
-    default:
-      return 'Unknown status'
-  }
 }
