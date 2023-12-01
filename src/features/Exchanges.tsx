@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import dayjs from 'dayjs'
 import 'dayjs/locale/en' // Import the English locale for dayjs
 import { ExchangeItem } from './ExchangeItem'
@@ -10,35 +10,21 @@ import 'react-toastify/dist/ReactToastify.css'
 import { useRecoilState } from 'recoil'
 import { didState } from '../state'
 
-/**
- * This component displays a list of exchange transactions and provides the ability to view
- * details of each exchange in a modal.
- *
- * @returns {JSX.Element} - Returns the Exchanges component.
- */
 export function Exchanges() {
   const [exchanges, setExchanges] = useState(undefined)
   const [selectedExchange, setSelectedExchange] = useState()
-  const [exchangeModalOpen, setExchangeModalOpen] = useState(false)
   const [did] = useRecoilState(didState)
+  const dialogRef = useRef<HTMLDialogElement>(null)
   dayjs.locale('en')
-
-  const contextClass = {
-    success: 'bg-blue-600',
-    error: 'bg-red-600',
-    info: 'bg-gray-600',
-    warning: 'bg-orange-400',
-    default: 'bg-neutral-900',
-    dark: 'bg-neutral-600 font-gray-300',
-  }
 
   useEffect(() => {
     const init = async () => {
-      // wait a little bit so we can render a pretty spinner animation
-      await new Promise(resolve => setTimeout(() => resolve(undefined), 250)) 
-      
-      const fetchedExchanges = await fetchExchanges(did)
-      setExchanges(fetchedExchanges.reverse())
+      try {
+        const fetchedExchanges = await fetchExchanges(did)
+        setExchanges(fetchedExchanges.reverse())
+      } catch (e) {
+        setExchanges(null)
+      }
     }
     init()
   }, [])
@@ -48,7 +34,7 @@ export function Exchanges() {
   //      feel free to change the interval, 
   //      which is currently set to 11 seconds
   useEffect(() => {
-    // TODO: make sure fetching newly created exchanges work now that backend is removed
+  //   // TODO: make sure fetching newly created exchanges work now that backend is removed
     const pollIntervalId = setInterval(async () => {
       const fetchedExchanges = await fetchExchanges(did)
       setExchanges(fetchedExchanges.reverse()) // todo: add sorting to push completed to bottom
@@ -56,15 +42,15 @@ export function Exchanges() {
     return () => clearInterval(pollIntervalId)
   }, [])
 
-  const handleStatusModalOpen = (exchange) => {
+  const handleModalOpen = (exchange) => {
     setSelectedExchange(exchange)
-    setExchangeModalOpen(true)
+    dialogRef.current.showModal()
   }
-  const handleStatusModalClose = () => {
-    setExchangeModalOpen(false)
+  const handleModalClose = () => {
+    setSelectedExchange(undefined)
   }
 
-  if (!exchanges) {
+  if (exchanges === undefined) {
     return (
       <div className='mt-4'>
         <Spinner />
@@ -72,39 +58,49 @@ export function Exchanges() {
     )
   } 
 
+  if (exchanges === null) {
+    return (
+      <div className="min-w-0 truncate text-center">
+        <h3 className="text-xs font-medium leading-6 text-neutral-100 mt-3">Failed to load</h3>
+        <p className="truncate text-xs leading-5 text-gray-500">There was an error trying to loading transactions.</p>
+      </div>
+    )
+  } 
+
   return (
     <>
       <ToastContainer
-        toastClassName={({ type }) => contextClass[type || 'dark'] +
-          ' relative flex p-1 mb-2 min-h-10 rounded-md justify-between overflow-hidden cursor-pointer'
-        }
-        bodyClassName={() => 'text-sm font-white font-med block p-3'}
+        toastClassName='bg-neutral-600 font-gray-300 relative flex p-1 mb-2 min-h-10 rounded-md justify-between overflow-hidden cursor-pointer'
+        bodyClassName='text-sm font-white font-med block p-3'
       />
-      <div className="overflow-auto max-h-[calc(70vh-4rem)] no-scrollbar" aria-label="Directory">
-        <div className="sticky top-0 z-1 border-y border-b-neutral-500 border-t-transparent bg-neutral-800 px-3 py-1.5 text-sm leading-6 text-neutral-200">
+        <div className="sticky top-0 z-1 bg-neutral-800 px-3 py-1.5 text-sm leading-6 text-neutral-200">
           <div className="flex">
-            <div className="flex-grow pr-2 text-xs text-neutral-100 ml-2 mt-1">Transaction</div>
-            <div className="w-1/5 text-xs font-medium leading-6 text-neutral-100 text-right mr-2">Amount</div>
+            <h3 className="flex-grow pr-2 text-xs text-neutral-100 ml-2 mt-1">Transaction</h3>
+            <h3 className="w-1/5 text-xs font-medium leading-6 text-neutral-100 text-right mr-2">Amount</h3>
           </div>
         </div>
         {exchanges.length === 0 ? (
           <div className="min-w-0 truncate text-center">
-            <p className="text-xs font-medium leading-6 text-neutral-100 mt-3">No transactions found</p>
+            <h4 className="text-xs font-medium leading-6 text-neutral-100 mt-3">No transactions found</h4>
             <p className="truncate text-xs leading-5 text-gray-500">Request an exchange.</p>
           </div>
         ) : (
           exchanges.map((exchange, index) => (
-            <ExchangeItem key={index} exchange={exchange} handleStatusModalOpen={handleStatusModalOpen}/>
+            <ExchangeItem key={index} exchange={exchange} handleStatusModalOpen={handleModalOpen}/>
         )))}
 
-        {exchangeModalOpen && (
-          <ExchangeModal
-            exchange={selectedExchange}
-            isOpen={exchangeModalOpen}
-            onClose={handleStatusModalClose}
-          />
-        )}
-      </div>
+        <dialog ref={dialogRef} className='fixed bg-transparent' onClick={(e) => {
+          if (e.target === dialogRef.current) {
+            dialogRef.current.close()
+          }
+        }} onClose={handleModalClose}>
+          { selectedExchange && (
+            <ExchangeModal
+              exchange={selectedExchange}
+              onClose={handleModalClose}
+            />
+          )}
+        </dialog>
     </>
    
   )

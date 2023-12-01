@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { PayinAmountInput } from './RfqPayinAmountInput'
 import { RfqContext } from './RfqContext'
 import { NextButton } from '../common/NextButton'
@@ -17,7 +17,6 @@ export function PayinPage(props: SetQuoteAmountFormProps) {
   const minPayinAmount = offering.payinCurrency.minSubunit ? TBD(offering.payinCurrency.minSubunit).value : 0.01
   const maxPayinAmount = offering.payinCurrency.maxSubunit ? TBD(offering.payinCurrency.maxSubunit).value : 5
 
-  console.log(offering)
   const isWithinMinMax = (amount: string, minQuoteAmount: number, maxQuoteAmount: number) => {
     const parsedAmount = parseFloat(amount)
 

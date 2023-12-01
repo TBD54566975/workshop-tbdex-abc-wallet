@@ -18,7 +18,6 @@ export function Offerings() {
       } catch (e) {
         setOfferings(null)
       }
-      
     }
     fetchData()
   }, [])
@@ -90,7 +89,6 @@ export function Offerings() {
             </RfqProvider>
           )}
         </dialog>
-
 
     </>
   )

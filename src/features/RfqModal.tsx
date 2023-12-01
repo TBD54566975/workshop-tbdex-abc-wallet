@@ -47,7 +47,7 @@ export function RfqModal(props: RfqModalProps) {
   const { title, component } = forms[step]
 
   return (
-    <div className='relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all w-80 h-128'>
+    <div className='relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all w-80 h-auto'>
       <div className='flex items-center justify-center text-white'>
         <h2 className='text-sm'>{offering.description}</h2>
       </div>
