@@ -28,6 +28,7 @@ export async function sendRFQ(opts: SendRfqOptions) {
     pfiDid
   } = opts
   let message
+  /* <--- Add code here ---> */
   return await TbdexHttpClient.sendMessage({ message })
 }
 
@@ -38,6 +39,7 @@ export async function sendOrder(opts: SendOrderOptions) {
     pfiDid
   } = opts
   let message
+  /* <--- Add code here ---> */
   return await TbdexHttpClient.sendMessage({ message })
 }
 
@@ -57,6 +59,7 @@ export function generateExchangeStatusValues(exchange) {
 export function renderOrderStatus (exchange) {
   const status = generateExchangeStatusValues(exchange)
   switch (status) {
+    /* <--- Add code here ---> */
     default:
       return 'Unknown status'
   }
