@@ -63,7 +63,7 @@ export async function sendOrder(opts: SendOrderOptions) {
 
 export function generateExchangeStatusValues(exchange) {
   if (exchange.kind === 'close') {
-    if (exchange.data.reason.toLowerCase().includes('completed')) {
+    if (exchange.data.reason.toLowerCase().includes('complete')) {
       return 'completed'
     } else if (exchange.data.reason.toLowerCase().includes('expired')) {
       return 'expired'
