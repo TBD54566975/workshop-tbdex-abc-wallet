@@ -16,9 +16,9 @@ export const renderActionButtons = (amount, exchangeId, onClose, didState) => {
       setIsUpdating(true)
       try {
         await createOrder({ exchangeId, didState })
-        const newBalance = await getTBDollars(did)
-        if (accountBalance !== newBalance) {
-          setAccountBalance(newBalance)
+        const res = await getTBDollars(did)
+        if (accountBalance !== res.balance) {
+          setAccountBalance(res.balance)
         }
       } catch (e) {
         setIsUpdating(false)
