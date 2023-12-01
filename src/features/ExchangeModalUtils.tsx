@@ -1,16 +1,24 @@
 import { CheckCircleIcon, QuestionMarkCircleIcon, EllipsisHorizontalCircleIcon, XCircleIcon } from '@heroicons/react/20/solid'
 import { TBD } from '../currency-utils'
 import { useState } from 'react'
-import { createOrder } from '../apiUtils'
+import { createOrder, getTBDollars } from '../apiUtils'
+import { useRecoilState } from 'recoil'
+import { balanceState } from '../state'
 
 export const renderActionButtons = (amount, exchangeId, onClose, didState) => {
   const [isUpdating, setIsUpdating] = useState(false)
+  const [accountBalance, setAccountBalance] = useRecoilState(balanceState)
+  const [did] = useRecoilState(didState)
 
   const handleUpdateExchange = async (action) => {
     if (action === 'accept') {
       setIsUpdating(true)
       try {
         await createOrder({ exchangeId, didState })
+        const newBalance = await getTBDollars(did)
+        if (accountBalance !== newBalance) {
+          setAccountBalance(newBalance)
+        }
       } catch (e) {
         setIsUpdating(false)
         console.error(e)

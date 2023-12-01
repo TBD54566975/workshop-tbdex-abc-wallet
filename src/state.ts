@@ -53,3 +53,8 @@ export const credentialsState = atom<CredentialsState>({
     },
   ],
 })
+
+export const balanceState = atom({
+  key: 'balanceState', 
+  default: 0,
+})
