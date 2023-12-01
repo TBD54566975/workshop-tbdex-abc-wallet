@@ -1,4 +1,4 @@
-import { SelectedPaymentMethod, TbdexHttpClient } from '@tbdex/http-client'
+import { Order, Rfq, SelectedPaymentMethod, TbdexHttpClient } from '@tbdex/http-client'
 import { PortableDid } from '@web5/dids'
 
 export type SendRfqOptions = {
@@ -27,21 +27,20 @@ export async function sendRFQ(opts: SendRfqOptions) {
     didState,
     pfiDid
   } = opts
-  let message
-  // const message = Rfq.create({
-  //   data: {
-  //     offeringId,
-  //     payinSubunits,
-  //     payinMethod,
-  //     payoutMethod,
-  //     claims: credentials
-  //   },
-  //   metadata: {
-  //     from: didState.did,
-  //     to: pfiDid
-  //   }
-  // })
-  // await message.sign(didState)
+  const message = Rfq.create({
+    data: {
+      offeringId,
+      payinSubunits,
+      payinMethod,
+      payoutMethod,
+      claims: credentials
+    },
+    metadata: {
+      from: didState.did,
+      to: pfiDid
+    }
+  })
+  await message.sign(didState)
   return await TbdexHttpClient.sendMessage({ message })
 }
 
@@ -51,15 +50,14 @@ export async function sendOrder(opts: SendOrderOptions) {
     didState,
     pfiDid
   } = opts
-  let message
-  // const message = Order.create({
-  //   metadata: {
-  //     exchangeId: exchangeId,
-  //     from: didState.did,
-  //     to: pfiDid
-  //   }
-  // })
-  // await message.sign(didState)
+  const message = Order.create({
+    metadata: {
+      exchangeId: exchangeId,
+      from: didState.did,
+      to: pfiDid
+    }
+  })
+  await message.sign(didState)
   return await TbdexHttpClient.sendMessage({ message })
 }
 
