@@ -42,7 +42,6 @@ export async function fetchExchanges(didState, vc?) {
     pfiDid: samplePfiDid,
     did: didState
   })
-  console.log(response.data)
   const exchanges = response.data.map(exchange => {
     const latestMessage = exchange[exchange.length - 1]
     const rfqMessage = exchange.find(message => message.kind === 'rfq')
