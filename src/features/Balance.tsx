@@ -12,7 +12,7 @@ export function Balance() {
   useEffect(() => {
     const init = async () => {
       try {
-        const balance = await getTBDollars(did)
+        const balance = await getTBDollars({didState: did })
         setAccountBalance(balance)
       } catch {
         setAccountBalance(null)
@@ -22,7 +22,7 @@ export function Balance() {
   }, [])
 
   async function addFunds() {
-    const balance = await getTBDollars(did, true)
+    const balance = await getTBDollars({ didState: did, topup: true })
     if (balance) {
       setAccountBalance(balance)
     }

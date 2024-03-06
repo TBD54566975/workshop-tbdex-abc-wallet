@@ -9,6 +9,22 @@ import { fetchExchanges } from '../apiUtils'
 import 'react-toastify/dist/ReactToastify.css'
 import { useRecoilState } from 'recoil'
 import { didState } from '../state'
+import { BearerDid } from '@web5/dids'
+
+
+async function loadExchanges(did: BearerDid) {
+  const fetchedExchanges = []
+  const pfis = [
+    JSON.parse(localStorage.getItem('pfi_0')).uri,
+    JSON.parse(localStorage.getItem('pfi_1')).uri,
+    JSON.parse(localStorage.getItem('pfi_2')).uri
+  ]
+  for (const pfiUri of pfis) {
+    const exchanges = await fetchExchanges({ didState: did, pfiDid: pfiUri })
+    fetchedExchanges.push(exchanges)
+  }
+  return fetchedExchanges.flatMap(exchangeGroup => exchangeGroup)
+}
 
 export function Exchanges() {
   const [exchanges, setExchanges] = useState(undefined)
@@ -20,27 +36,20 @@ export function Exchanges() {
   useEffect(() => {
     const init = async () => {
       try {
-        const fetchedExchanges = await fetchExchanges(did)
-        setExchanges(fetchedExchanges.reverse())
+        const exchanges = await loadExchanges(did)
+        setExchanges(exchanges)
       } catch (e) {
         setExchanges(null)
       }
     }
-    init()
-  }, [])
-
-  // [kw] todo this is a crude polling implementation
-  //      too much state changes going on, could be optimized
-  //      feel free to change the interval, 
-  //      which is currently set to 11 seconds
-  useEffect(() => {
-  //   // TODO: make sure fetching newly created exchanges work now that backend is removed
-    const pollIntervalId = setInterval(async () => {
-      const fetchedExchanges = await fetchExchanges(did)
-      setExchanges(fetchedExchanges.reverse()) // todo: add sorting to push completed to bottom
-    }, 5000)
-    return () => clearInterval(pollIntervalId)
-  }, [])
+    if (did) {
+      init()
+      const pollIntervalId = setInterval(async () => {
+        init()// todo: add sorting to push completed to bottom
+      }, 5000)
+      return () => clearInterval(pollIntervalId)
+    }
+  }, [did])
 
   const handleModalOpen = (exchange) => {
     setSelectedExchange(exchange)
