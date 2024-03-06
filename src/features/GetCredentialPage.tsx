@@ -1,7 +1,7 @@
 import { didState, credentialsState } from '../state'
 import { useRecoilState } from 'recoil'
 import { FaAddressCard } from 'react-icons/fa'
-import { createPfis, issueCredential } from '../mocks'
+import { issueCredential } from '../mocks'
 import { useRef } from 'react'
 
 
@@ -20,7 +20,6 @@ export function GetCredentialPage() {
         name: formData.get('name')
       }
     })
-    await createPfis()
     setCredentials([...credentials, credential])
   }
 

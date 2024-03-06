@@ -2,34 +2,44 @@ import { Close, Offering, OrderStatus, Quote, Rfq } from '@tbdex/http-client'
 import { VerifiableCredential } from '@web5/credentials'
 import { BearerDid, DidDht, PortableDid } from '@web5/dids'
 
-export async function createOrLoadBearerDid(params: { key: `pfi_${string}` | 'issuer', serviceEndpoint?: string }): Promise<BearerDid> {
-  const { key, serviceEndpoint } = params
-  // Load did from localStorage based on key
-  const portableDid = localStorage.getItem(key)
+
+export const mockProviderDids = {
+  get issuer() {
+    return `
+    {"uri":"did:dht:by51q1b6up5c5bydeqn9t13cegx8ogkf6c4w5yiixtbuw9boh49o","document":{"id":"did:dht:by51q1b6up5c5bydeqn9t13cegx8ogkf6c4w5yiixtbuw9boh49o","verificationMethod":[{"id":"did:dht:by51q1b6up5c5bydeqn9t13cegx8ogkf6c4w5yiixtbuw9boh49o#0","type":"JsonWebKey","controller":"did:dht:by51q1b6up5c5bydeqn9t13cegx8ogkf6c4w5yiixtbuw9boh49o","publicKeyJwk":{"crv":"Ed25519","kty":"OKP","x":"CDcnSD6bds2EA0OF-MssQZ54GUXzNU2CtXxDOnww5r8","kid":"zKI9zDFCiGaUmaPQ2OLMXNfbEc2qfNftyTecj2zL2F4","alg":"EdDSA"}}],"authentication":["did:dht:by51q1b6up5c5bydeqn9t13cegx8ogkf6c4w5yiixtbuw9boh49o#0"],"assertionMethod":["did:dht:by51q1b6up5c5bydeqn9t13cegx8ogkf6c4w5yiixtbuw9boh49o#0"],"capabilityDelegation":["did:dht:by51q1b6up5c5bydeqn9t13cegx8ogkf6c4w5yiixtbuw9boh49o#0"],"capabilityInvocation":["did:dht:by51q1b6up5c5bydeqn9t13cegx8ogkf6c4w5yiixtbuw9boh49o#0"]},"metadata":{"published":true,"versionId":"1709703515"},"privateKeys":[{"crv":"Ed25519","d":"7u0S1N2FNiFvkaLDJyyU3tg8dWNjPMCn1F7aEw8nbpg","kty":"OKP","x":"CDcnSD6bds2EA0OF-MssQZ54GUXzNU2CtXxDOnww5r8","kid":"zKI9zDFCiGaUmaPQ2OLMXNfbEc2qfNftyTecj2zL2F4","alg":"EdDSA"}]}
+    `
+  }, 
+  get pfi_0() {
+    return `
+    {"uri":"did:dht:5tc78y7yicxzwy4dgfdktjhdiz8n31ac913bi646t1j9pd64urfo","document":{"id":"did:dht:5tc78y7yicxzwy4dgfdktjhdiz8n31ac913bi646t1j9pd64urfo","verificationMethod":[{"id":"did:dht:5tc78y7yicxzwy4dgfdktjhdiz8n31ac913bi646t1j9pd64urfo#0","type":"JsonWebKey","controller":"did:dht:5tc78y7yicxzwy4dgfdktjhdiz8n31ac913bi646t1j9pd64urfo","publicKeyJwk":{"crv":"Ed25519","kty":"OKP","x":"3FnTg6CrH3oDQzFGqKeDrc4sywz8shr7XoyT9o_amQs","kid":"5AktqI58MrKOrfRAfOT6vzz-bp1Igj3C95vbWsKThbo","alg":"EdDSA"}}],"authentication":["did:dht:5tc78y7yicxzwy4dgfdktjhdiz8n31ac913bi646t1j9pd64urfo#0"],"assertionMethod":["did:dht:5tc78y7yicxzwy4dgfdktjhdiz8n31ac913bi646t1j9pd64urfo#0"],"capabilityDelegation":["did:dht:5tc78y7yicxzwy4dgfdktjhdiz8n31ac913bi646t1j9pd64urfo#0"],"capabilityInvocation":["did:dht:5tc78y7yicxzwy4dgfdktjhdiz8n31ac913bi646t1j9pd64urfo#0"],"service":[{"type":"PFI","id":"did:dht:5tc78y7yicxzwy4dgfdktjhdiz8n31ac913bi646t1j9pd64urfo#pfi","serviceEndpoint":"https://localhost:9001"}]},"metadata":{"published":true,"versionId":"1709703515"},"privateKeys":[{"crv":"Ed25519","d":"MQC12ov3pd6DRAbfvWRTamFgLVBix7TEJEmBZIhdno4","kty":"OKP","x":"3FnTg6CrH3oDQzFGqKeDrc4sywz8shr7XoyT9o_amQs","kid":"5AktqI58MrKOrfRAfOT6vzz-bp1Igj3C95vbWsKThbo","alg":"EdDSA"}]}
+    `
+  },
+  get pfi_1() {
+    return `
+    {"uri":"did:dht:4o5smqsmhrce3d6qb57jj4qpisxfdojwudoy1ia7bsdhzuaiddno","document":{"id":"did:dht:4o5smqsmhrce3d6qb57jj4qpisxfdojwudoy1ia7bsdhzuaiddno","verificationMethod":[{"id":"did:dht:4o5smqsmhrce3d6qb57jj4qpisxfdojwudoy1ia7bsdhzuaiddno#0","type":"JsonWebKey","controller":"did:dht:4o5smqsmhrce3d6qb57jj4qpisxfdojwudoy1ia7bsdhzuaiddno","publicKeyJwk":{"crv":"Ed25519","kty":"OKP","x":"1DdlusvhGIyPzg76lOnNrZ5RwTSY4AlXHQ2Hy88VGMU","kid":"cZDXkMFH4T-Mh9e9mCKFoWf2QbrerSwbyuIIcVokCc4","alg":"EdDSA"}}],"authentication":["did:dht:4o5smqsmhrce3d6qb57jj4qpisxfdojwudoy1ia7bsdhzuaiddno#0"],"assertionMethod":["did:dht:4o5smqsmhrce3d6qb57jj4qpisxfdojwudoy1ia7bsdhzuaiddno#0"],"capabilityDelegation":["did:dht:4o5smqsmhrce3d6qb57jj4qpisxfdojwudoy1ia7bsdhzuaiddno#0"],"capabilityInvocation":["did:dht:4o5smqsmhrce3d6qb57jj4qpisxfdojwudoy1ia7bsdhzuaiddno#0"],"service":[{"type":"PFI","id":"did:dht:4o5smqsmhrce3d6qb57jj4qpisxfdojwudoy1ia7bsdhzuaiddno#pfi","serviceEndpoint":"https://localhost:90011"}]},"metadata":{"published":true,"versionId":"1709703515"},"privateKeys":[{"crv":"Ed25519","d":"9cJA1TAvxwi46hym-aZV4A4LZ6PsVcMZCEw-eHNJ51A","kty":"OKP","x":"1DdlusvhGIyPzg76lOnNrZ5RwTSY4AlXHQ2Hy88VGMU","kid":"cZDXkMFH4T-Mh9e9mCKFoWf2QbrerSwbyuIIcVokCc4","alg":"EdDSA"}]}
+    `
+  },
+  get pfi_2() {
+    return `
+    {"uri":"did:dht:buhcdsz1xtrpyipzpioy1z7jbqr8xtofe6jr988uj194nyc75gny","document":{"id":"did:dht:buhcdsz1xtrpyipzpioy1z7jbqr8xtofe6jr988uj194nyc75gny","verificationMethod":[{"id":"did:dht:buhcdsz1xtrpyipzpioy1z7jbqr8xtofe6jr988uj194nyc75gny#0","type":"JsonWebKey","controller":"did:dht:buhcdsz1xtrpyipzpioy1z7jbqr8xtofe6jr988uj194nyc75gny","publicKeyJwk":{"crv":"Ed25519","kty":"OKP","x":"DPjB2vJ8SNBVt21gCV-pC4h3xgVHkk-c80y_oQGd2YQ","kid":"WEGPBcwDB5vP6a8oJs4Oed7jQj4n5oYF_IOaqHitbRg","alg":"EdDSA"}}],"authentication":["did:dht:buhcdsz1xtrpyipzpioy1z7jbqr8xtofe6jr988uj194nyc75gny#0"],"assertionMethod":["did:dht:buhcdsz1xtrpyipzpioy1z7jbqr8xtofe6jr988uj194nyc75gny#0"],"capabilityDelegation":["did:dht:buhcdsz1xtrpyipzpioy1z7jbqr8xtofe6jr988uj194nyc75gny#0"],"capabilityInvocation":["did:dht:buhcdsz1xtrpyipzpioy1z7jbqr8xtofe6jr988uj194nyc75gny#0"],"service":[{"type":"PFI","id":"did:dht:buhcdsz1xtrpyipzpioy1z7jbqr8xtofe6jr988uj194nyc75gny#pfi","serviceEndpoint":"https://localhost:90021"}]},"metadata":{"published":true,"versionId":"1709703515"},"privateKeys":[{"crv":"Ed25519","d":"mB6VhnLHEvTxhhGZQMJg6D35IoKq3bS-YG7mzL0eETg","kty":"OKP","x":"DPjB2vJ8SNBVt21gCV-pC4h3xgVHkk-c80y_oQGd2YQ","kid":"WEGPBcwDB5vP6a8oJs4Oed7jQj4n5oYF_IOaqHitbRg","alg":"EdDSA"}]}
+    `
+  }
+}
+
+export async function loadProviderBearerDid(key: `pfi_${string}` | 'issuer' ): Promise<BearerDid> {
+  // Load did from `mockProviderDids` based on key
+  const portableDid = mockProviderDids[key]
   if (portableDid) {
     const bearerDid: BearerDid = await DidDht.import({ portableDid: JSON.parse(portableDid) })
     return bearerDid
   } else {
-    // If no DID is stored, create a new one and store it. 
-    const bearerDid: BearerDid = await DidDht.create(key.startsWith('pfi_') ? {
-      // Add service endpoints if did is for a PFI.
-      options: {
-        services: [{
-          type            : 'PFI',
-          id              : 'pfi',
-          serviceEndpoint
-        }]
-      }
-    } : {})
-    const portableDid = await bearerDid.export()
-    localStorage.setItem(key, JSON.stringify(portableDid))
-    return bearerDid
+    console.error('no portable did found for provider')
   }
 }
 
 export async function issueCredential(params: { subjectDid: string, data: Record<string, unknown> }) {
   const { subjectDid, data } = params
-  const issuer = await createOrLoadBearerDid({ key: 'issuer' })
+  const issuer = await loadProviderBearerDid('issuer')
 
   const vc = await VerifiableCredential.create({
     type: 'ABC Credential',
@@ -40,15 +50,6 @@ export async function issueCredential(params: { subjectDid: string, data: Record
 
   const vcJwt = await vc.sign({ did: issuer })
   return vcJwt
-}
-
-export async function createPfis(): Promise<BearerDid[]> {
-  const dids = []
-  for (const index in Array.from({ length: 3 })) {
-    const did = await createOrLoadBearerDid({ key: `pfi_${index}`, serviceEndpoint: `https://localhost:555${index}` })
-    dids.push(did)
-  }
-  return dids
 }
 
 export async function createOffering(params: { pfiDid: BearerDid, offeringData }) {
