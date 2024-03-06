@@ -1,42 +1,37 @@
-import { Order, Rfq, SelectedPaymentMethod, TbdexHttpClient } from '@tbdex/http-client'
-import { PortableDid } from '@web5/dids'
+import { Close, Order, Rfq, RfqData, TbdexHttpClient } from '@tbdex/http-client'
+import { BearerDid } from '@web5/dids'
 
-export type SendRfqOptions = {
-  offeringId: string, 
-  payinSubunits: string, 
-  payinMethod: SelectedPaymentMethod,
-  payoutMethod: SelectedPaymentMethod,
-  credentials: string[],
-  didState: PortableDid,
+export type SendRfqOptions = RfqData & {
+  didState: BearerDid,
   pfiDid: string
 }
 
 export type SendOrderOptions = {
   exchangeId: string,
-  didState: PortableDid,
+  didState: BearerDid,
   pfiDid: string
 }
 
 export async function sendRFQ(opts: SendRfqOptions) {
   const { 
     offeringId, 
-    payinSubunits, 
+    payinAmount, 
     payinMethod,
     payoutMethod,
-    credentials,
+    claims,
     didState,
     pfiDid
   } = opts
   const message = Rfq.create({
     data: {
       offeringId,
-      payinSubunits,
+      payinAmount,
       payinMethod,
       payoutMethod,
-      claims: credentials
+      claims
     },
     metadata: {
-      from: didState.did,
+      from: didState.uri,
       to: pfiDid
     }
   })
@@ -53,7 +48,7 @@ export async function sendOrder(opts: SendOrderOptions) {
   const message = Order.create({
     metadata: {
       exchangeId: exchangeId,
-      from: didState.did,
+      from: didState.uri,
       to: pfiDid
     }
   })
@@ -61,17 +56,17 @@ export async function sendOrder(opts: SendOrderOptions) {
   return await TbdexHttpClient.sendMessage({ message })
 }
 
-export function generateExchangeStatusValues(exchange) {
-  if (exchange.kind === 'close') {
-    if (exchange.data.reason.toLowerCase().includes('complete')) {
+export function generateExchangeStatusValues(exchangeMessage) {
+  if (exchangeMessage instanceof Close) {
+    if (exchangeMessage.data.reason.toLowerCase().includes('completed')) {
       return 'completed'
-    } else if (exchange.data.reason.toLowerCase().includes('expired')) {
+    } else if (exchangeMessage.data.reason.toLowerCase().includes('expired')) {
       return 'expired'
     } else {
       return 'failed'
     }
   }
-  return exchange.kind
+  return exchangeMessage.kind
 }
 
 export function renderOrderStatus (exchange) {

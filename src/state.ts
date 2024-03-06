@@ -1,24 +1,27 @@
 import { atom, DefaultValue } from 'recoil'
-import { DidKeyMethod, PortableDid } from '@web5/dids'
+import { DidDht, BearerDid } from '@web5/dids'
 
 // Define the shape of the credentials atom's state
 type CredentialsState = string[]
 
 // Atom to hold the DID
-export const didState = atom<PortableDid | null>({
+export const didState = atom<BearerDid | null>({
   key: 'didState',
   default: null, // Start with no DID
   effects_UNSTABLE: [
     ({ onSet, setSelf }) => {
       // Load the DID from localStorage when the atom is first used
-      const storedDid = localStorage.getItem('DID')
-      if (storedDid) {
-        setSelf(JSON.parse(storedDid))
+      const portableDid = localStorage.getItem('DID')
+      if (portableDid) {
+        DidDht.import({ portableDid: JSON.parse(portableDid) }).then((bearerDid: BearerDid) => {
+          setSelf(bearerDid)
+        })
       } else {
         // If no DID is stored, create a new one and store it
-        DidKeyMethod.create().then((did: PortableDid) => {
-          setSelf(did)
-          localStorage.setItem('DID', JSON.stringify(did))
+        DidDht.create().then(async (bearerDid: BearerDid) => {
+          const portableDid = await bearerDid.export()
+          setSelf(bearerDid)
+          localStorage.setItem('DID', JSON.stringify(portableDid))
         })
       }
 

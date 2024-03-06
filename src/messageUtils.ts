@@ -1,34 +1,41 @@
-import { SelectedPaymentMethod, TbdexHttpClient } from '@tbdex/http-client'
-import { PortableDid } from '@web5/dids'
+import { Close, Order, Rfq, RfqData, TbdexHttpClient } from '@tbdex/http-client'
+import { BearerDid } from '@web5/dids'
 
-export type SendRfqOptions = {
-  offeringId: string, 
-  payinSubunits: string, 
-  payinMethod: SelectedPaymentMethod,
-  payoutMethod: SelectedPaymentMethod,
-  credentials: string[],
-  didState: PortableDid,
+export type SendRfqOptions = RfqData & {
+  didState: BearerDid,
   pfiDid: string
 }
 
 export type SendOrderOptions = {
   exchangeId: string,
-  didState: PortableDid,
+  didState: BearerDid,
   pfiDid: string
 }
 
 export async function sendRFQ(opts: SendRfqOptions) {
   const { 
     offeringId, 
-    payinSubunits, 
+    payinAmount, 
     payinMethod,
     payoutMethod,
-    credentials,
+    claims,
     didState,
     pfiDid
   } = opts
-  let message
-  /* <--- Add code here ---> */
+  const message = Rfq.create({
+    data: {
+      offeringId,
+      payinAmount,
+      payinMethod,
+      payoutMethod,
+      claims
+    },
+    metadata: {
+      from: didState.uri,
+      to: pfiDid
+    }
+  })
+  await message.sign(didState)
   return await TbdexHttpClient.sendMessage({ message })
 }
 
@@ -38,29 +45,47 @@ export async function sendOrder(opts: SendOrderOptions) {
     didState,
     pfiDid
   } = opts
-  let message
-  /* <--- Add code here ---> */
+  const message = Order.create({
+    metadata: {
+      exchangeId: exchangeId,
+      from: didState.uri,
+      to: pfiDid
+    }
+  })
+  await message.sign(didState)
   return await TbdexHttpClient.sendMessage({ message })
 }
 
-export function renderOrderStatus (exchange) {
-  const status = generateExchangeStatusValues(exchange)
-  switch (status) {
-    /* <--- Add code here ---> */
-    default:
-      return 'Unknown status'
-  }
-}
-
-export function generateExchangeStatusValues(exchange) {
-  if (exchange.kind === 'close') {
-    if (exchange.data.reason.toLowerCase().includes('completed')) {
+export function generateExchangeStatusValues(exchangeMessage) {
+  if (exchangeMessage instanceof Close) {
+    if (exchangeMessage.data.reason.toLowerCase().includes('completed')) {
       return 'completed'
-    } else if (exchange.data.reason.toLowerCase().includes('expired')) {
+    } else if (exchangeMessage.data.reason.toLowerCase().includes('expired')) {
       return 'expired'
     } else {
       return 'failed'
     }
   }
-  return exchange.kind
+  return exchangeMessage.kind
+}
+
+export function renderOrderStatus (exchange) {
+  const status = generateExchangeStatusValues(exchange)
+  switch (status) {
+    case 'rfq':
+      return 'Requested'
+    case 'quote':
+      return 'Quoted'
+    case 'order':
+    case 'orderstatus':
+      return 'Pending'
+    case 'completed':
+      return 'Completed'
+    case 'expired':
+      return 'Expired'
+    case 'failed':
+      return 'Failed'
+    default:
+      return 'Unknown status'
+  }
 }

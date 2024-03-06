@@ -34,7 +34,7 @@ export function getSubunits(quoteAmountUnits: string, quoteCurrencyCode: string)
     } else if(quoteCurrencyCode ==='USDC' || quoteCurrencyCode ==='USD' || quoteCurrencyCode ==='TBD') {
       subunits = Number(quoteAmountUnits)*100
     } else {
-      console.log('unexpected currency code', quoteCurrencyCode)
+      console.error('unexpected currency code', quoteCurrencyCode)
     }
     
   return subunits.toFixed(0).toString()
@@ -74,8 +74,6 @@ export function convertToBaseUnits(quoteUnits: string, quoteUnitsPerBaseUnit: st
 
   if (quoteUnits !== '') {
     const baseUnits = (parseFloat(quoteUnits) * parsedUnitPrice).toString()
-    // console.log('quote units: ', quoteUnits)
-    // console.log('base units calculated: ', baseUnits)
     return baseUnits
   } else {
     return ''
