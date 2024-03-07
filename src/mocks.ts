@@ -174,7 +174,7 @@ export const offeringDataTbdDollarsToBitcoin = {
             path: ['$.issuer'],
             filter: {
               type: 'string',
-              const:  (JSON.parse(localStorage.getItem('issuer')) as PortableDid).uri
+              const:  (JSON.parse(mockProviderDids.issuer) as PortableDid).uri
             }
           }
         ]
@@ -236,7 +236,7 @@ export const offeringDataSocksToCandles = {
             path: ['$.issuer'],
             filter: {
               type: 'string',
-              const:  (JSON.parse(localStorage.getItem('issuer')) as PortableDid).uri
+              const:  (JSON.parse(mockProviderDids.issuer) as PortableDid).uri
             }
           }
         ]
@@ -298,7 +298,7 @@ export const offeringDataSocksToBitcoin = {
             path: ['$.issuer'],
             filter: {
               type: 'string',
-              const:  (JSON.parse(localStorage.getItem('issuer')) as PortableDid).uri
+              const:  (JSON.parse(mockProviderDids.issuer) as PortableDid).uri
             }
           }
         ]
@@ -360,7 +360,7 @@ export const offeringDataCandlesToBitcoin = {
             path: ['$.issuer'],
             filter: {
               type: 'string',
-              const:  (JSON.parse(localStorage.getItem('issuer')) as PortableDid).uri
+              const:  (JSON.parse(mockProviderDids.issuer) as PortableDid).uri
             }
           }
         ]
@@ -422,7 +422,7 @@ export const offeringDataTbdDollarsToSocks = {
             path: ['$.issuer'],
             filter: {
               type: 'string',
-              const:  (JSON.parse(localStorage.getItem('issuer')) as PortableDid).uri
+              const:  (JSON.parse(mockProviderDids.issuer) as PortableDid).uri
             }
           }
         ]
