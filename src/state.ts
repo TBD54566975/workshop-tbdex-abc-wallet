@@ -1,8 +1,6 @@
 import { atom, DefaultValue } from 'recoil'
 import { DidDht, BearerDid } from '@web5/dids'
-
-// Define the shape of the credentials atom's state
-type CredentialsState = string[]
+import { issueCredential } from './mocks/mocks'
 
 // Atom to hold the DID
 export const didState = atom<BearerDid | null>({
@@ -36,7 +34,7 @@ export const didState = atom<BearerDid | null>({
 })
 
 // Atom to hold the credentials
-export const credentialsState = atom<CredentialsState>({
+export const credentialsState = atom<string[]>({
   key: 'credentialsState',
   default: [], // Start with an empty array
   effects_UNSTABLE: [
@@ -45,7 +43,19 @@ export const credentialsState = atom<CredentialsState>({
       const storedCredentials = localStorage.getItem('CREDENTIALS')
       if (storedCredentials) {
         setSelf(JSON.parse(storedCredentials))
+      } else {
+        // If no credential is found, issue one with the name "Anonymous User"
+        issueCredential({
+          subjectDid: JSON.parse(localStorage.getItem('DID')).uri,
+          data: {
+            name: 'Anonymous User'
+          }
+        }).then((credential) => {
+          setSelf([credential])
+          localStorage.setItem('CREDENTIALS', JSON.stringify(credential))
+        })
       }
+
 
       // When the credentials change, store them in localStorage
       onSet((newCredentials) => {
@@ -57,7 +67,26 @@ export const credentialsState = atom<CredentialsState>({
   ],
 })
 
-export const balanceState = atom({
+export const balanceState = atom<number>({
   key: 'balanceState', 
-  default: 0,
+  default: 100,
+  effects_UNSTABLE: [
+    ({ onSet, setSelf }) => {
+      // Load the balance from localStorage when the atom is first used
+      const storedBalance = localStorage.getItem('BALANCE')
+      if (storedBalance) {
+        setSelf(JSON.parse(storedBalance))
+      } else {
+        // If no balance is stored, reset to default value of 100
+        setSelf(100)
+      }
+
+      // When the balance changes, store them in localStorage
+      onSet((newBalance) => {
+        if (newBalance !== 100) {
+          localStorage.setItem('BALANCE', JSON.stringify(newBalance))
+        }
+      })
+    },
+  ],
 })

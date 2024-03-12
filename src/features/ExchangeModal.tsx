@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { renderActionButtons, renderStatusInfo } from './ExchangeModalUtils'
-import { money, BTC, removeTrailingZeros } from '../currency-utils'
+import { money, BTC } from '../currency-utils'
 import { type ClientExchange } from '../apiUtils'
 import { useRecoilState } from 'recoil'
 import { didState } from '../state'
@@ -27,7 +27,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
         </div>
         <p className="text-xs text-gray-500 mt-1">Exchange from TBD to BTC</p>
         <div className="mt-8 mb-1 text-3xl font-semibold text-gray-200">
-          {removeTrailingZeros(money(props.exchange.payinAmount).format())} TBD
+          {money(props.exchange.payinAmount).format()} TBD
         </div>
         <p className="text-xs text-gray-500 mb-3">{dayjs(props.exchange.createdTime).format('MMM D [at] h:mm A')}</p>
 
@@ -36,7 +36,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
         <div className="w-full mt-6 px-5 pt-3 text-xs text-gray-400">
           <div className="flex mb-2">
             <div className="w-1/2 text-left text-gray-500">Amount</div>
-            <div className="w-1/2 text-right">{removeTrailingZeros(BTC(props.exchange.payoutAmount).format())} BTC</div>
+            <div className="w-1/2 text-right">{(BTC(props.exchange.payoutAmount).format())} BTC</div>
           </div>
           <div className="flex mb-2">
             <div className="w-1/2 text-left text-gray-500">To</div>

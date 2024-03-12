@@ -1,21 +1,10 @@
-import { useEffect } from 'react'
 import { useRecoilState } from 'recoil'
-import { getInitialTBDollarsBalance } from '../apiUtils'
 import { balanceState } from '../state'
 import { Spinner } from '../common/Spinner'
 import { TBD } from '../currency-utils'
 
 export function Balance() {
-  const [accountBalance, setAccountBalance] = useRecoilState(balanceState)
-
-  useEffect(() => {
-    try {
-      const balance = getInitialTBDollarsBalance()
-      setAccountBalance(balance)
-    } catch {
-      setAccountBalance(null)
-    }
-  }, [])
+  const [accountBalance] = useRecoilState(balanceState)
   
   return (
     <>

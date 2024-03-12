@@ -5,22 +5,38 @@ import { RfqProvider } from './RfqContext.tsx'
 import { Spinner } from '../common/Spinner.tsx'
 import { fetchOfferings } from '../apiUtils.js'
 import bitcoinIcon from '../assets/bitcoin.svg'
+import { mockProviderDids } from '../mocks/mocks.ts'
+import { Offering } from '@tbdex/http-client'
 
 export function Offerings() {
-  const [offerings, setOfferings] = useState(undefined)
+  const [offerings, setOfferings] = useState<Offering[]>(undefined)
   const [selectedOffering, setSelectedOffering] = useState<string | undefined>()
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
-    const fetchData = async () => {
+    const init = async () => {
       try {
-        setOfferings(await fetchOfferings())
+        const fetchedOfferings: Offering[][] = []
+        const pfis = [
+          mockProviderDids.pfi_0.uri,
+        ]
+        for (const pfiUri of pfis) {
+          const offering = await fetchOfferings(pfiUri)
+          fetchedOfferings.push(offering)
+        }
+        setOfferings(fetchedOfferings.flatMap(offering => offering))
       } catch (e) {
         setOfferings(null)
       }
     }
-    fetchData()
-  }, [])
+    if (!offerings || !offerings.length) {
+      init()
+      const pollIntervalId = setInterval(async () => {
+        init()// todo: add sorting to push completed to bottom
+      }, 5000)
+      return () => clearInterval(pollIntervalId)
+    }
+  }, [offerings])
 
   const handleModalOpen = (offering) => {
     setSelectedOffering(offering)
@@ -45,6 +61,12 @@ export function Offerings() {
 
   return (
     <>
+      { offerings.length === 0 ? (
+          <div className="min-w-0 truncate text-center">
+            <h4 className="text-xs font-medium leading-6 text-neutral-100 mt-3">No offerings found</h4>
+            <p className="truncate text-xs leading-5 text-gray-500">Check back later.</p>
+          </div>
+        ) : (
         <ul role="list" className="divide-y divide-transparent">
           {offerings.map((offering, ind) => (
             <li key={ind} className="py-1">
@@ -62,10 +84,10 @@ export function Offerings() {
                   </div>
                   <div className="min-w-0 truncate text-left pl-3">
                     <p className="text-xs font-medium leading-6 text-neutral-100">
-                      {offering.description}
+                      {offering.data.description}
                     </p>
                     <p className="truncate text-xs leading-5 text-gray-500">
-                      {offering.payoutUnitsPerPayinUnit} {offering.payoutCurrency.currencyCode} for 1 {offering.payinCurrency.currencyCode}
+                      {offering.data.payoutUnitsPerPayinUnit} {offering.data.payoutCurrency.currencyCode} for 1 {offering.data.payinCurrency.currencyCode}
                     </p>
                   </div>
                 </div>
@@ -77,6 +99,7 @@ export function Offerings() {
             </li>
           ))}
         </ul>
+      )}
 
         <dialog ref={dialogRef} className='fixed bg-transparent' onClick={(e) => {
           if (e.target === dialogRef.current) {

@@ -3,16 +3,17 @@ import { RfqContext } from './RfqContext'
 import { RfqFormIds, getRfqForms } from './RfqForms'
 import { BackButton } from '../common/BackButton'
 import { Panel } from '../common/Panel'
-import { createExchange } from '../apiUtils'
+import { createExchange, fetchExchanges } from '../apiUtils'
 import '../styles/date.css'
-import { getSubunits } from '../currency-utils'
 import { useRecoilState } from 'recoil'
 import { credentialsState, didState } from '../state'
+import { ExchangesContext } from './ExchangesContext'
 
 type RfqModalProps = {
   onClose: () => void;
 }
 export function RfqModal(props: RfqModalProps) {
+  const { setExchanges } = useContext(ExchangesContext)
   const [step, setStep] = useState(0)
   const { offering, payinAmount, paymentDetails } = useContext(RfqContext)
   const [credentials] = useRecoilState(credentialsState)
@@ -20,13 +21,15 @@ export function RfqModal(props: RfqModalProps) {
 
   const sendRfq = async () => { 
     await createExchange({
+      pfiDid: offering.metadata.from,
       offeringId: offering.id, 
-      payinSubunits: getSubunits(payinAmount, offering.payinCurrency.currencyCode), 
-      payinMethod: { kind: offering.payinMethods[0].kind, paymentDetails: {} },
-      payoutMethod: { kind: offering.payoutMethods[0].kind, paymentDetails },
-      credentials,
+      payinAmount: Number(payinAmount).toFixed(2).toString(), 
+      payinMethod: { kind: offering.data.payinMethods[0].kind, paymentDetails: {} },
+      payoutMethod: { kind: offering.data.payoutMethods[0].kind, paymentDetails },
+      claims: credentials,
       didState: did
     })
+    setExchanges(await fetchExchanges({ didState: did, pfiDid: offering.metadata.from }))
     props.onClose()
   }
 
@@ -49,7 +52,7 @@ export function RfqModal(props: RfqModalProps) {
   return (
     <div className='relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all w-80 h-auto'>
       <div className='flex items-center justify-center text-white'>
-        <h2 className='text-sm'>{offering.description}</h2>
+        <h2 className='text-sm'>{offering.data.description}</h2>
       </div>
       {step > 0 && (<BackButton onBack={handleBack}/>)}
 

@@ -14,8 +14,8 @@ export function PayinPage(props: SetQuoteAmountFormProps) {
   const [currentPayinAmount, setCurrentPayinAmount] = useState(payinAmount)
   const [hasAttemptedNext, setHasAttemptedNext] = useState(false)
 
-  const minPayinAmount = offering.payinCurrency.minSubunit ? TBD(offering.payinCurrency.minSubunit).value : 0.01
-  const maxPayinAmount = offering.payinCurrency.maxSubunit ? TBD(offering.payinCurrency.maxSubunit).value : 5
+  const minPayinAmount = offering.data.payinCurrency.minAmount ? TBD(offering.data.payinCurrency.minAmount).value : 0.01
+  const maxPayinAmount = offering.data.payinCurrency.maxAmount ? TBD(offering.data.payinCurrency.maxAmount).value : 5
 
   const isWithinMinMax = (amount: string, minQuoteAmount: number, maxQuoteAmount: number) => {
     const parsedAmount = parseFloat(amount)
@@ -62,7 +62,7 @@ export function PayinPage(props: SetQuoteAmountFormProps) {
 
       <div className="mx-8 fixed inset-x-0 bottom-6 z-10 flex flex-col items-center justify-center">
         {(currentPayoutAmount === '' && hasAttemptedNext) && (
-          <p className="text-sm text-red-600 mb-2">Enter an amount in {offering.payinCurrency.currencyCode}</p>
+          <p className="text-sm text-red-600 mb-2">Enter an amount in {offering.data.payinCurrency.currencyCode}</p>
         )}
         <NextButton disabled={false} onNext={handleNext} />
       </div>

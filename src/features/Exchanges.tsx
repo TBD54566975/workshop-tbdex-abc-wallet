@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import dayjs from 'dayjs'
 import 'dayjs/locale/en' // Import the English locale for dayjs
 import { ExchangeItem } from './ExchangeItem'
@@ -10,24 +10,31 @@ import 'react-toastify/dist/ReactToastify.css'
 import { useRecoilState } from 'recoil'
 import { didState } from '../state'
 import { BearerDid } from '@web5/dids'
+import { mockProviderDids } from '../mocks/mocks'
+import { Exchange } from '@tbdex/http-client'
+import { ExchangesContext } from './ExchangesContext'
 
 
-async function loadExchanges(did: BearerDid) {
+async function loadExchanges(did: BearerDid): Promise<Exchange[]> {
   const fetchedExchanges = []
   const pfis = [
-    JSON.parse(localStorage.getItem('pfi_0')).uri,
-    JSON.parse(localStorage.getItem('pfi_1')).uri,
-    JSON.parse(localStorage.getItem('pfi_2')).uri
+    mockProviderDids.pfi_0.uri,
   ]
+  
   for (const pfiUri of pfis) {
-    const exchanges = await fetchExchanges({ didState: did, pfiDid: pfiUri })
-    fetchedExchanges.push(exchanges)
+    try {
+      const exchanges = await fetchExchanges({ didState: did, pfiDid: pfiUri })
+      fetchedExchanges.push(exchanges)
+    } catch (e) {
+      console.error(e)
+      throw Error(e)
+    }
   }
-  return fetchedExchanges.flatMap(exchangeGroup => exchangeGroup)
+  return fetchedExchanges.flatMap(exchanges => exchanges)
 }
 
 export function Exchanges() {
-  const [exchanges, setExchanges] = useState(undefined)
+  const {exchanges, setExchanges} = useContext(ExchangesContext)
   const [selectedExchange, setSelectedExchange] = useState()
   const [did] = useRecoilState(didState)
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -40,13 +47,14 @@ export function Exchanges() {
         setExchanges(exchanges)
       } catch (e) {
         setExchanges(null)
+        throw Error(e)
       }
     }
     if (did) {
       init()
       const pollIntervalId = setInterval(async () => {
         init()// todo: add sorting to push completed to bottom
-      }, 5000)
+      }, 20000)
       return () => clearInterval(pollIntervalId)
     }
   }, [did])

@@ -1,0 +1,53 @@
+{
+  "uri": "did:dht:fptoqqcccofffc7sytuhxyr7f413fpm1ch41iq8snu48s9bdjcby",
+  "document": {
+      "id": "did:dht:fptoqqcccofffc7sytuhxyr7f413fpm1ch41iq8snu48s9bdjcby",
+      "verificationMethod": [
+          {
+              "id": "did:dht:fptoqqcccofffc7sytuhxyr7f413fpm1ch41iq8snu48s9bdjcby#0",
+              "type": "JsonWebKey",
+              "controller": "did:dht:fptoqqcccofffc7sytuhxyr7f413fpm1ch41iq8snu48s9bdjcby",
+              "publicKeyJwk": {
+                  "crv": "Ed25519",
+                  "kty": "OKP",
+                  "x": "K2MHOYxkClKztgRnx4CdLqWStXJnNSq49hT0e3wjSwI",
+                  "kid": "ZX_c-VAX9KV0joHpl4Y4b8KyrVWb4FyAk4WfHSe8WXo",
+                  "alg": "EdDSA"
+              }
+          }
+      ],
+      "authentication": [
+          "did:dht:fptoqqcccofffc7sytuhxyr7f413fpm1ch41iq8snu48s9bdjcby#0"
+      ],
+      "assertionMethod": [
+          "did:dht:fptoqqcccofffc7sytuhxyr7f413fpm1ch41iq8snu48s9bdjcby#0"
+      ],
+      "capabilityDelegation": [
+          "did:dht:fptoqqcccofffc7sytuhxyr7f413fpm1ch41iq8snu48s9bdjcby#0"
+      ],
+      "capabilityInvocation": [
+          "did:dht:fptoqqcccofffc7sytuhxyr7f413fpm1ch41iq8snu48s9bdjcby#0"
+      ],
+      "service": [
+          {
+              "id": "did:dht:fptoqqcccofffc7sytuhxyr7f413fpm1ch41iq8snu48s9bdjcby#pfi",
+              "type": "PFI",
+              "serviceEndpoint": "https://localhost:5552"
+          }
+      ]
+  },
+  "metadata": {
+      "published": true,
+      "versionId": "1709835205"
+  },
+  "privateKeys": [
+      {
+          "crv": "Ed25519",
+          "d": "2Ykn-LlpIUyWD55u6kMpS8jzA3WcpG-ljadykeoxcJM",
+          "kty": "OKP",
+          "x": "K2MHOYxkClKztgRnx4CdLqWStXJnNSq49hT0e3wjSwI",
+          "kid": "ZX_c-VAX9KV0joHpl4Y4b8KyrVWb4FyAk4WfHSe8WXo",
+          "alg": "EdDSA"
+      }
+  ]
+}

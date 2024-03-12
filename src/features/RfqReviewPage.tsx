@@ -15,8 +15,8 @@ export function ReviewPage(props: ReviewPageProps) {
     paymentDetails
   } = useContext(RfqContext)
 
-  const payinCurrency = offering?.payinCurrency.currencyCode
-  const payoutCurrency = offering?.payoutCurrency.currencyCode
+  const payinCurrency = offering?.data.payinCurrency.currencyCode
+  const payoutCurrency = offering?.data.payoutCurrency.currencyCode
   const payinUnits = money(payinAmount).format()
   const payoutUnits = formatUnits(payoutAmount, 8)
 
@@ -39,7 +39,7 @@ export function ReviewPage(props: ReviewPageProps) {
 
       <div className="mt-4 text-gray-400">
         <div className='text-xs font-small px-3'>
-          <p className='text-white'>{offering.payoutMethods[0].kind}</p>
+          <p className='text-white'>{offering.data.payoutMethods[0].kind}</p>
         </div>
         <p className='text-xs px-3 mt-1'>{paymentDetails.address}</p>
       </div>
