@@ -7,7 +7,7 @@ import { balanceState } from '../state'
 import { ExchangesContext } from './ExchangesContext'
 import { Spinner } from '../common/Spinner'
 
-export const renderActionButtons = (amount, exchangeId, onClose, didState, pfiDid) => {
+export const renderActionButtons = (amount, exchangeId, onClose, didState, pfiUri) => {
   const { setExchangesUpdated } = useContext(ExchangesContext)
   const [isUpdating, setIsUpdating] = useState(false)
   const [accountBalance, setAccountBalance] = useRecoilState(balanceState)
@@ -16,7 +16,7 @@ export const renderActionButtons = (amount, exchangeId, onClose, didState, pfiDi
     if (action === 'accept') {
       setIsUpdating(true)
       try {
-        await createOrder({ exchangeId, didState, pfiDid })
+        await createOrder({ exchangeId, didState, pfiUri })
         setAccountBalance(accountBalance - Number(amount))
         setExchangesUpdated(true)
       } catch (e) {

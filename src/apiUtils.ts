@@ -1,6 +1,6 @@
 import { BearerDid } from '@web5/dids'
-import { Offering, TbdexHttpClient } from '@tbdex/http-client'
-import { SendOrderOptions, SendRfqOptions, generateExchangeStatusValues, sendOrder, sendRFQ } from './messageUtils'
+import { Close, Offering, TbdexHttpClient } from '@tbdex/http-client'
+import { SendOrderOptions, SendRfqOptions, sendOrder, sendRFQ } from './messageUtils'
 import { Jwt, VcDataModel } from '@web5/credentials'
 
 export type ClientExchange = {
@@ -14,7 +14,7 @@ export type ClientExchange = {
   expirationTime?: string,
   from: string,
   to: string,
-  pfiDid: string
+  pfiUri: string
 }
 
 // 1a. Render the credential you obtained from the issuer.
@@ -48,11 +48,11 @@ export function isMatchingOffering(offering: Offering, credentials: string[]) {
 
 
 // 1b. Fetch current exchanges in progress
-export async function fetchExchanges(params: {didState: BearerDid, pfiDid: string }) {
-  const { didState, pfiDid } = params
+export async function fetchExchanges(params: {didState: BearerDid, pfiUri: string }) {
+  const { didState, pfiUri } = params
   try {
     const exchanges = await TbdexHttpClient.getExchanges({
-      pfiDid: pfiDid,
+      pfiDid: pfiUri,
       did: didState
     })
     const mappedExchanges = exchanges.map(exchange => {
@@ -83,14 +83,48 @@ export async function fetchExchanges(params: {didState: BearerDid, pfiDid: strin
 }
 
 // 1c. Fetch offerings to choose from
-export async function fetchOfferings(pfiDid: string) {
+export async function fetchOfferings(pfiUri: string) {
   try {
     const offerings = await TbdexHttpClient.getOfferings({
-      pfiDid
+      pfiDid: pfiUri
     })
     return offerings
   } catch (e) {
     throw new Error(`Error fetching offerings: ${e}`)
+  }
+}
+
+export function generateExchangeStatusValues(exchangeMessage) {
+  if (exchangeMessage instanceof Close) {
+    if (exchangeMessage.data.reason.toLowerCase().includes('complete')) {
+      return 'completed'
+    } else if (exchangeMessage.data.reason.toLowerCase().includes('expired')) {
+      return 'expired'
+    } else {
+      return 'failed'
+    }
+  }
+  return exchangeMessage.kind
+}
+
+export function renderOrderStatus (exchange) {
+  const status = generateExchangeStatusValues(exchange)
+  switch (status) {
+    case 'rfq':
+      return 'Requested'
+    case 'quote':
+      return 'Quoted'
+    case 'order':
+    case 'orderstatus':
+      return 'Pending'
+    case 'completed':
+      return 'Completed'
+    case 'expired':
+      return 'Expired'
+    case 'failed':
+      return 'Failed'
+    default:
+      return 'Unknown status'
   }
 }
 

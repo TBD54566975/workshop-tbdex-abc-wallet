@@ -20,9 +20,9 @@ export function RfqModal(props: RfqModalProps) {
   const [credentials] = useRecoilState(credentialsState)
   const [did] = useRecoilState(didState)
 
-  const sendRfq = async () => { 
+  const submitRfq = async () => { 
     await createExchange({
-      pfiDid: offering.metadata.from,
+      pfiUri: offering.metadata.from,
       offeringId: offering.id, 
       payinAmount: Number(payinAmount).toFixed(2).toString(), 
       payinMethod: { kind: offering.data.payinMethods[0].kind, paymentDetails: {} },
@@ -37,7 +37,7 @@ export function RfqModal(props: RfqModalProps) {
   const handleNext = async () => {
     const currentFormId = forms[step].id
     if (currentFormId === RfqFormIds.Review) {
-      await sendRfq()
+      await submitRfq()
     } else {
       setStep((prevStep) => prevStep + 1)
     }
