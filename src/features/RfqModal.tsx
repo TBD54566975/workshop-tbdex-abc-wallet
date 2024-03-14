@@ -3,17 +3,18 @@ import { RfqContext } from './RfqContext'
 import { RfqFormIds, getRfqForms } from './RfqForms'
 import { BackButton } from '../common/BackButton'
 import { Panel } from '../common/Panel'
-import { createExchange, fetchExchanges } from '../apiUtils'
+import { createExchange } from '../apiUtils'
 import '../styles/date.css'
 import { useRecoilState } from 'recoil'
 import { credentialsState, didState } from '../state'
 import { ExchangesContext } from './ExchangesContext'
+import { pfiAllowlist } from '../allowlist'
 
 type RfqModalProps = {
   onClose: () => void;
 }
 export function RfqModal(props: RfqModalProps) {
-  const { setExchanges } = useContext(ExchangesContext)
+  const { setExchangesUpdated } = useContext(ExchangesContext)
   const [step, setStep] = useState(0)
   const { offering, payinAmount, paymentDetails } = useContext(RfqContext)
   const [credentials] = useRecoilState(credentialsState)
@@ -29,7 +30,7 @@ export function RfqModal(props: RfqModalProps) {
       claims: credentials,
       didState: did
     })
-    setExchanges(await fetchExchanges({ didState: did, pfiDid: offering.metadata.from }))
+    setExchangesUpdated(true)
     props.onClose()
   }
 
@@ -51,8 +52,13 @@ export function RfqModal(props: RfqModalProps) {
 
   return (
     <div className='relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all w-80 h-auto'>
-      <div className='flex items-center justify-center text-white'>
-        <h2 className='text-sm'>{offering.data.description}</h2>
+      <div className='text-white text-center'>
+        <h2 className='text-xs leading-6'>
+          { pfiAllowlist.find(pfi => pfi.pfiUri === offering.metadata.from).pfiName }
+        </h2>
+        <h3 className='text-sm font-medium'>
+          {offering.data.description}
+        </h3>
       </div>
       {step > 0 && (<BackButton onBack={handleBack}/>)}
 

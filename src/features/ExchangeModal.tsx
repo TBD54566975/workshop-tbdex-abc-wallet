@@ -6,6 +6,7 @@ import { money, BTC } from '../currency-utils'
 import { type ClientExchange } from '../apiUtils'
 import { useRecoilState } from 'recoil'
 import { didState } from '../state'
+import { pfiAllowlist } from '../allowlist'
 
 type ExchangeModalProps = {
   exchange: ClientExchange
@@ -25,9 +26,14 @@ export function ExchangeModal(props: ExchangeModalProps) {
         <div className="flex justify-center items-center w-12 h-12 mt-1 rounded-full bg-indigo-600 text-white text-sm font-semibold mb-4">
           $
         </div>
-        <p className="text-xs text-gray-500 mt-1">Exchange from TBD to BTC</p>
+        <h2 className='text-xs text-gray-200'>
+          { pfiAllowlist.find(pfi => pfi.pfiUri === props.exchange.pfiDid).pfiName }
+        </h2>
+        {props.exchange.payinCurrency && props.exchange.payoutCurrency && 
+          <p className="text-xs text-gray-500 mt-1">Exchange from {props.exchange.payinCurrency} to {props.exchange.payoutCurrency}</p>
+        }
         <div className="mt-8 mb-1 text-3xl font-semibold text-gray-200">
-          {money(props.exchange.payinAmount).format()} TBD
+          {money(props.exchange.payinAmount).format()} {props.exchange.payinCurrency}
         </div>
         <p className="text-xs text-gray-500 mb-3">{dayjs(props.exchange.createdTime).format('MMM D [at] h:mm A')}</p>
 
@@ -36,7 +42,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
         <div className="w-full mt-6 px-5 pt-3 text-xs text-gray-400">
           <div className="flex mb-2">
             <div className="w-1/2 text-left text-gray-500">Amount</div>
-            <div className="w-1/2 text-right">{(BTC(props.exchange.payoutAmount).format())} BTC</div>
+            <div className="w-1/2 text-right">{(BTC(props.exchange.payoutAmount).format())} {props.exchange.payoutCurrency}</div>
           </div>
           <div className="flex mb-2">
             <div className="w-1/2 text-left text-gray-500">To</div>
@@ -55,7 +61,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
         </div>
       </div>
 
-      {props.exchange.status === 'quote' && renderActionButtons(props.exchange.payinAmount, props.exchange.id, props.onClose, did)}
+      {props.exchange.status === 'quote' && renderActionButtons(props.exchange.payinAmount, props.exchange.id, props.onClose, did, props.exchange.pfiDid )}
     </div>
   )
 }

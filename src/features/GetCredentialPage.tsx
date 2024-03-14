@@ -17,7 +17,7 @@ export function GetCredentialPage() {
     const credential = await issueCredential({
       subjectDid: did.uri,
       data: {
-        name: formData.get('name')
+        countryCode: formData.get('countryCode')
       }
     })
     setCredentials([...credentials, credential])
@@ -26,13 +26,14 @@ export function GetCredentialPage() {
   return (
     <div className="flex items-center justify-center" style={{ height: '100dvh' }}>
       <form ref={formRef} onSubmit={(e) => getCredentials(e)} className="text-center">
-        <label className="sr-only" htmlFor="name">Your name</label> 
+        <label className="sr-only" htmlFor="countryCode">Country code</label> 
         <input 
           className="block w-full p-3 text-2xl mb-4 border-2 text-white bg-neutral-800 rounded-md focus:text-white placeholder:text-gray-400 focus:ring-transparent sm:leading-6" 
           required 
-          id="name" 
-          name="name" 
-          placeholder="Your name" 
+          id="countryCode" 
+          name="countryCode" 
+          placeholder="Country code (eg. UK)" 
+          maxLength={2}
           autoComplete='off' />
         <button
           type="submit"

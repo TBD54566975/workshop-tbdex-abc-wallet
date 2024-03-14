@@ -22,7 +22,7 @@ export async function sendRFQ(opts: SendRfqOptions) {
     didState,
     pfiDid
   } = opts
-  const message = Rfq.create({
+  const rfq = Rfq.create({
     data: {
       offeringId,
       payinAmount,
@@ -35,8 +35,8 @@ export async function sendRFQ(opts: SendRfqOptions) {
       to: pfiDid
     }
   })
-  await message.sign(didState)
-  return await TbdexHttpClient.sendMessage({ message })
+  await rfq.sign(didState)
+  return await TbdexHttpClient.sendMessage({ message: rfq })
 }
 
 export async function sendOrder(opts: SendOrderOptions) {
@@ -45,20 +45,20 @@ export async function sendOrder(opts: SendOrderOptions) {
     didState,
     pfiDid
   } = opts
-  const message = Order.create({
+  const order = Order.create({
     metadata: {
       exchangeId: exchangeId,
       from: didState.uri,
       to: pfiDid
     }
   })
-  await message.sign(didState)
-  return await TbdexHttpClient.sendMessage({ message })
+  await order.sign(didState)
+  return await TbdexHttpClient.sendMessage({ message: order })
 }
 
 export function generateExchangeStatusValues(exchangeMessage) {
   if (exchangeMessage instanceof Close) {
-    if (exchangeMessage.data.reason.toLowerCase().includes('completed')) {
+    if (exchangeMessage.data.reason.toLowerCase().includes('complete')) {
       return 'completed'
     } else if (exchangeMessage.data.reason.toLowerCase().includes('expired')) {
       return 'expired'

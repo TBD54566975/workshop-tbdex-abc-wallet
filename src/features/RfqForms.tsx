@@ -27,7 +27,7 @@ export const getRfqForms = (offering: Offering, handleNext, handleBack) => {
       id: RfqFormIds.Payin
     },
     {
-      title: 'What\'s your BTC address?',
+      title: 'Enter delivery details',
       component: (
         <RfqAddressPage
           schema={offering.data.payoutMethods[0].requiredPaymentDetails}

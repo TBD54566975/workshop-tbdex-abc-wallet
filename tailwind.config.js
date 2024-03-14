@@ -11,6 +11,9 @@ export default {
       },
       height: {
         '128': '32rem',
+      },
+      opacity: {
+        '50': '0.5',
       }
     },
   },

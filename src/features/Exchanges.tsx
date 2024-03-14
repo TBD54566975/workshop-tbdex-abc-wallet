@@ -34,11 +34,29 @@ async function loadExchanges(did: BearerDid): Promise<Exchange[]> {
 }
 
 export function Exchanges() {
-  const {exchanges, setExchanges} = useContext(ExchangesContext)
+  const { exchangesUpdated, setExchangesUpdated } = useContext(ExchangesContext)
+  const [exchanges, setExchanges] = useState(undefined)
   const [selectedExchange, setSelectedExchange] = useState()
   const [did] = useRecoilState(didState)
   const dialogRef = useRef<HTMLDialogElement>(null)
   dayjs.locale('en')
+
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const exchanges = await loadExchanges(did)
+        setExchanges(exchanges)
+      } catch (e) {
+        setExchanges(null)
+        throw Error(e)
+      }
+    }
+    if (exchangesUpdated) {
+      init()
+      setExchangesUpdated(false)
+    }
+  }, [exchangesUpdated])
 
   useEffect(() => {
     const init = async () => {
@@ -54,7 +72,7 @@ export function Exchanges() {
       init()
       const pollIntervalId = setInterval(async () => {
         init()// todo: add sorting to push completed to bottom
-      }, 20000)
+      }, 2000)
       return () => clearInterval(pollIntervalId)
     }
   }, [did])
@@ -104,7 +122,7 @@ export function Exchanges() {
         ) : (
           exchanges.map((exchange, index) => (
             <ExchangeItem key={index} exchange={exchange} handleStatusModalOpen={handleModalOpen}/>
-        )))}
+        ))).reverse()}
 
         <dialog ref={dialogRef} className='fixed bg-transparent' onClick={(e) => {
           if (e.target === dialogRef.current) {

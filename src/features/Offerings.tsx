@@ -3,12 +3,17 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { RfqModal } from './RfqModal.tsx'
 import { RfqProvider } from './RfqContext.tsx'
 import { Spinner } from '../common/Spinner.tsx'
-import { fetchOfferings } from '../apiUtils.js'
+import { fetchOfferings, isMatchingOffering } from '../apiUtils.js'
 import bitcoinIcon from '../assets/bitcoin.svg'
-import { mockProviderDids } from '../mocks/mocks.ts'
 import { Offering } from '@tbdex/http-client'
+import { pfiAllowlist } from '../allowlist.ts'
+import { credentialsState } from '../state.ts'
+import { useRecoilState } from 'recoil'
+
+
 
 export function Offerings() {
+  const [credentials] = useRecoilState(credentialsState)
   const [offerings, setOfferings] = useState<Offering[]>(undefined)
   const [selectedOffering, setSelectedOffering] = useState<string | undefined>()
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -17,11 +22,9 @@ export function Offerings() {
     const init = async () => {
       try {
         const fetchedOfferings: Offering[][] = []
-        const pfis = [
-          mockProviderDids.pfi_0.uri,
-        ]
-        for (const pfiUri of pfis) {
-          const offering = await fetchOfferings(pfiUri)
+        for (const pfi of pfiAllowlist) {
+          const offering = await fetchOfferings(pfi.pfiUri)
+          
           fetchedOfferings.push(offering)
         }
         setOfferings(fetchedOfferings.flatMap(offering => offering))
@@ -29,14 +32,8 @@ export function Offerings() {
         setOfferings(null)
       }
     }
-    if (!offerings || !offerings.length) {
       init()
-      const pollIntervalId = setInterval(async () => {
-        init()// todo: add sorting to push completed to bottom
-      }, 5000)
-      return () => clearInterval(pollIntervalId)
-    }
-  }, [offerings])
+  }, [])
 
   const handleModalOpen = (offering) => {
     setSelectedOffering(offering)
@@ -71,8 +68,13 @@ export function Offerings() {
           {offerings.map((offering, ind) => (
             <li key={ind} className="py-1">
               <button
-                className="w-full h-full rounded-lg px-4 py-1 hover:bg-neutral-600/20 flex"
+                className={`w-full h-full rounded-lg px-4 py-1 flex ${
+                  isMatchingOffering(offering, credentials)
+                    ? 'hover:bg-neutral-600/20'
+                    : 'opacity-50'
+                }`}
                 onClick={() => handleModalOpen(offering)}
+                disabled={!isMatchingOffering(offering, credentials)}
               >
                 <div className="flex items-center flex-grow pr-2">
                   <div className="flex justify-center items-center w-8 h-8 mt-0.5 rounded-lg bg-neutral-600 text-white text-sm font-semibold">
@@ -83,6 +85,9 @@ export function Offerings() {
                       />
                   </div>
                   <div className="min-w-0 truncate text-left pl-3">
+                    <p className="text-xs font-medium leading-5 text-neutral-100">
+                      { pfiAllowlist.find(pfi => pfi.pfiUri === offering.metadata.from).pfiName }
+                    </p>
                     <p className="text-xs font-medium leading-6 text-neutral-100">
                       {offering.data.description}
                     </p>

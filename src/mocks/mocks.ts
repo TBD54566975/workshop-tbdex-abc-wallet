@@ -1,4 +1,4 @@
-import { Close, Offering, Order, OrderStatus, Quote, Rfq } from '@tbdex/http-client'
+import { Close, Message, Offering, OfferingData, Order, OrderStatus, Quote, Rfq } from '@tbdex/http-client'
 import { VerifiableCredential } from '@web5/credentials'
 import { BearerDid, DidDht } from '@web5/dids'
 import issuer from './issuer.json' assert { type: 'json' }
@@ -46,7 +46,7 @@ export async function issueCredential(params: { subjectDid: string, data: Record
   const issuer = await mockProviderDids.issuer.bearerDid
 
   const vc = await VerifiableCredential.create({
-    type: 'ABC Credential',
+    type: 'ABCCredential',
     issuer: issuer.uri,
     subject: subjectDid,
     data
@@ -112,13 +112,13 @@ export async function createOrderStatus(params: { pfiDid: BearerDid, order: Orde
   return orderStatus
 }
 
-export async function createClose(params: { pfiDid: BearerDid, orderStatus: OrderStatus, reason: string }) {
-  const { pfiDid, orderStatus, reason } = params
+export async function createClose(params: { pfiDid: BearerDid, lastMessage: Message, reason: string }) {
+  const { pfiDid, lastMessage, reason } = params
   const close = Close.create({
     metadata: { 
       from: pfiDid.uri,
-      to: orderStatus.metadata.from,
-      exchangeId: orderStatus.metadata.exchangeId
+      to: lastMessage.metadata.from,
+      exchangeId: lastMessage.metadata.exchangeId
     },
     data: {
       reason
@@ -129,7 +129,7 @@ export async function createClose(params: { pfiDid: BearerDid, orderStatus: Orde
   return close
 }
 
-export const offeringDataTBDollarsToBitcoin_0 = {
+export const offeringDataTBDollarsToBitcoin_0: OfferingData = {
   description: 'Exchange your TBDollars for Bitcoin',
   payoutUnitsPerPayinUnit: '0.000027',
   payinCurrency: { currencyCode: 'TBD' },
@@ -176,7 +176,7 @@ export const offeringDataTBDollarsToBitcoin_0 = {
             }
           },
           {
-            path: ['$.credentialSubject.name'],
+            path: ['$.credentialSubject.countryCode'],
           },
           {
             path: ['$.issuer'],
@@ -191,17 +191,17 @@ export const offeringDataTBDollarsToBitcoin_0 = {
   }
 }
 
-export const offeringDataTBDollarsToBitcoin_1 = {
+export const offeringDataTBDollarsToBitcoin_1: OfferingData = {
   ...offeringDataTBDollarsToBitcoin_0,
   payoutUnitsPerPayinUnit: '0.000022',
 }
 
-export const offeringDataTBDollarsToBitcoin_2 = {
+export const offeringDataTBDollarsToBitcoin_2: OfferingData = {
   ...offeringDataTBDollarsToBitcoin_0,
   payoutUnitsPerPayinUnit: '0.000019',
 }
 
-export const offeringDataTBDollarsToSocks = {
+export const offeringDataTBDollarsToSocks: OfferingData = {
   description: 'Exchange your TBDollars for Socks',
   payoutUnitsPerPayinUnit: '0.2',
   payinCurrency: { currencyCode: 'TBD' },
@@ -218,11 +218,11 @@ export const offeringDataTBDollarsToSocks = {
         'title': 'Socks Required Payment Details',
         'type': 'object',
         'required': [
-          'deliveryAddress',
+          'address',
         ],
         'additionalProperties': false,
         'properties': {
-          'deliveryAddress': {
+          'address': {
             'title': 'Delivery Address',
             'description': 'Address to deliver the socks to',
             'type': 'string'
@@ -231,10 +231,35 @@ export const offeringDataTBDollarsToSocks = {
       }
     }
   ],
-  requiredClaims: offeringDataTBDollarsToBitcoin_0.requiredClaims
+  requiredClaims: {
+    id: '7ce4004c-3c38-4853-968b-e411bafcd946',
+    input_descriptors: [{
+      id: 'bbdb9b7c-5754-4f46-b63b-590bada959e1',
+      constraints: {
+        fields: [
+          {
+            path: [
+              '$.vc.type[*]',
+              '$.type[*]'
+            ],
+            filter: {
+              type: 'string',
+              const: 'NameCredential'
+            }
+          },
+          {
+            path: [
+              '$.vc.credentialSubject.firstName',
+              '$.credentialSubject.firstName'
+            ],
+          },
+        ]
+      }
+    }]
+  }
 }
 
-export const offeringDataTBDollarsForCandles = {
+export const offeringDataTBDollarsToCandles: OfferingData = {
   description: 'Exchange your TBDollars for Candles',
   payoutUnitsPerPayinUnit: '0.5',
   payinCurrency: { currencyCode: 'TBD' },
@@ -251,11 +276,11 @@ export const offeringDataTBDollarsForCandles = {
         'title': 'Candle Required Payment Details',
         'type': 'object',
         'required': [
-          'deliveryAddress',
+          'address',
         ],
         'additionalProperties': false,
         'properties': {
-          'deliveryAddress': {
+          'address': {
             'title': 'Delivery Address',
             'description': 'Address to deliver the candles to',
             'type': 'string'
@@ -267,11 +292,11 @@ export const offeringDataTBDollarsForCandles = {
   requiredClaims: offeringDataTBDollarsToBitcoin_0.requiredClaims
 }
 
-export const offeringDataTBDollarsForPlants = {
-  description: 'Exchange your TBDollars for Plants',
+export const offeringDataTBDollarsToPlants: OfferingData = {
+  description: 'Exchange your Plants for Bitcoin',
   payoutUnitsPerPayinUnit: '0.4',
-  payinCurrency: { currencyCode: 'PLN' },
-  payoutCurrency: { currencyCode: 'BTC' },
+  payinCurrency: { currencyCode: 'TBD' },
+  payoutCurrency: { currencyCode: 'PNT' },
   payinMethods: [{
     kind: 'TBDOLLARS_BALANCE',
     requiredPaymentDetails:{}
@@ -284,11 +309,11 @@ export const offeringDataTBDollarsForPlants = {
         'title': 'Plant Required Payment Details',
         'type': 'object',
         'required': [
-          'deliveryAddress',
+          'address',
         ],
         'additionalProperties': false,
         'properties': {
-          'deliveryAddress': {
+          'address': {
             'title': 'Delivery Address',
             'description': 'Address to deliver the plants to',
             'type': 'string'

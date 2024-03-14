@@ -8,18 +8,18 @@ import React, { useState } from 'react'
  * @returns {JSX.Element} - Returns the ExchangesProvider component.
  */
 export const ExchangesContext = React.createContext({ 
-  exchanges: undefined,
-  setExchanges: undefined,
+  exchangesUpdated: undefined,
+  setExchangesUpdated: undefined,
 })
 
 export const ExchangesProvider = ({ children }) => {
-  const [exchanges, setExchanges] = useState(undefined)
+  const [exchangesUpdated, setExchangesUpdated] = useState(false)
 
   return (
     <ExchangesContext.Provider
       value={{
-        exchanges,
-        setExchanges
+        exchangesUpdated,
+        setExchangesUpdated
       }}
     >
       {children}

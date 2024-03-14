@@ -85,7 +85,7 @@ const getStatusString = (exchange) => {
     case 'completed':
       return `Sent ${money(exchange.payinAmount).format()} TBD`
     case 'expired':
-      return `Quote for ${money(exchange.payinAmount).format()} TBD expired or failed`
+      return `Quote for ${money(exchange.payinAmount).format()} TBD expired`
     case 'failed':
       return `Payment for ${money(exchange.payinAmount).format()} TBD failed`
     default:
