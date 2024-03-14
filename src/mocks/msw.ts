@@ -142,55 +142,55 @@ function createHandlers(endpoint: string, request: IDBOpenDBRequest): HttpHandle
             const result = event.target['result'] as Message[][]
             if (result.length) {
               for (const exchange of result) {
-                  const lastMessage = exchange[exchange.length - 1]
-                  if (lastMessage && lastMessage.metadata.kind === 'quote' && new Date((lastMessage as Quote).data.expiresAt) < new Date()) {
-                    await sleep(10000)
-                    const store = request.result
-                    .transaction('exchanges', 'readwrite')
-                    .objectStore('exchanges')
-                    const close = await createClose( {
-                      pfiDid: await mockProviderDids.pfi_0.bearerDid,
-                      lastMessage,
-                      reason: 'Expired'
-                    })
-                    store.get(close.metadata.exchangeId).onsuccess = (event) => {
-                      const result = event.target['result']
-                      result.push(close)
-                      store.put(result, close.metadata.exchangeId)
-                    }
+                const lastMessage = exchange[exchange.length - 1]
+                const isExpired = lastMessage && lastMessage.metadata.kind === 'quote' && new Date((lastMessage as Quote).data.expiresAt) < new Date()
+                const isOrdered = lastMessage && lastMessage.metadata.kind === 'order'
+                const isProcessing = lastMessage && lastMessage.metadata.kind === 'orderstatus'
+                if (isExpired) {
+                  const store = request.result
+                  .transaction('exchanges', 'readwrite')
+                  .objectStore('exchanges')
+                  const close = await createClose( {
+                    pfiDid: await mockProviderDids.pfi_0.bearerDid,
+                    lastMessage,
+                    reason: 'Expired'
+                  })
+                  store.get(close.metadata.exchangeId).onsuccess = (event) => {
+                    const result = event.target['result']
+                    result.push(close)
+                    store.put(result, close.metadata.exchangeId)
                   }
-                  if (lastMessage && lastMessage.metadata.kind === 'order') {
-                    await sleep(10000)
-                    const store = request.result
-                    .transaction('exchanges', 'readwrite')
-                    .objectStore('exchanges')
-                    const orderstatus = await createOrderStatus( {
-                      pfiDid: await mockProviderDids.pfi_0.bearerDid,
-                      order: lastMessage as Order,
-                      status: 'Processing'
-                    })
-                    store.get(orderstatus.metadata.exchangeId).onsuccess = (event) => {
-                      const result = event.target['result']
-                      result.push(orderstatus)
-                      store.put(result, orderstatus.metadata.exchangeId)
-                    }
+                }
+                if (isOrdered) {
+                  const store = request.result
+                  .transaction('exchanges', 'readwrite')
+                  .objectStore('exchanges')
+                  const orderstatus = await createOrderStatus( {
+                    pfiDid: await mockProviderDids.pfi_0.bearerDid,
+                    order: lastMessage as Order,
+                    status: 'Processing'
+                  })
+                  store.get(orderstatus.metadata.exchangeId).onsuccess = (event) => {
+                    const result = event.target['result']
+                    result.push(orderstatus)
+                    store.put(result, orderstatus.metadata.exchangeId)
                   }
-                  if (lastMessage && lastMessage.metadata.kind === 'orderstatus') {
-                    await sleep(10000)
-                    const store = request.result
-                    .transaction('exchanges', 'readwrite')
-                    .objectStore('exchanges')
-                    const close = await createClose( {
-                      pfiDid: await mockProviderDids.pfi_0.bearerDid,
-                      lastMessage,
-                      reason: 'Complete'
-                    })
-                    store.get(close.metadata.exchangeId).onsuccess = (event) => {
-                      const result = event.target['result']
-                      result.push(close)
-                      store.put(result, close.metadata.exchangeId)
-                    }
+                }
+                if (isProcessing) {
+                  const store = request.result
+                  .transaction('exchanges', 'readwrite')
+                  .objectStore('exchanges')
+                  const close = await createClose( {
+                    pfiDid: await mockProviderDids.pfi_0.bearerDid,
+                    lastMessage,
+                    reason: 'Complete'
+                  })
+                  store.get(close.metadata.exchangeId).onsuccess = (event) => {
+                    const result = event.target['result']
+                    result.push(close)
+                    store.put(result, close.metadata.exchangeId)
                   }
+                }
               }
               exchanges = result
             }
@@ -304,8 +304,4 @@ export const worker_0 = setupWorker(
 
 export async function setupMockServer() {
   await worker_0.start()
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
 }

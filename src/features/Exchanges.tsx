@@ -19,8 +19,9 @@ async function loadExchanges(did: BearerDid): Promise<Exchange[]> {
   const fetchedExchanges = []
   const pfis = [
     mockProviderDids.pfi_0.uri,
+    mockProviderDids.pfi_1.uri,
+    mockProviderDids.pfi_2.uri,
   ]
-  
   for (const pfiUri of pfis) {
     try {
       const exchanges = await fetchExchanges({ didState: did, pfiDid: pfiUri })
