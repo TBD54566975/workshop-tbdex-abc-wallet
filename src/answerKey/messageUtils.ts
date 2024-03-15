@@ -1,43 +1,44 @@
-import { Order, Rfq, SelectedPaymentMethod, TbdexHttpClient } from '@tbdex/http-client'
-import { PortableDid } from '@web5/dids'
+import { Close, Order, Rfq, TbdexHttpClient, CloseData, RfqData, OrderData } from '@tbdex/http-client'
+import { BearerDid } from '@web5/dids'
 
-export type SendRfqOptions = {
-  offeringId: string, 
-  payinSubunits: string, 
-  payinMethod: SelectedPaymentMethod,
-  payoutMethod: SelectedPaymentMethod,
-  credentials: string[],
-  didState: PortableDid,
-  pfiDid: string
+export type SendRfqOptions = RfqData & {
+  didState: BearerDid,
+  pfiUri: string
 }
 
-export type SendOrderOptions = {
+export type SendOrderOptions = OrderData & {
   exchangeId: string,
-  didState: PortableDid,
-  pfiDid: string
+  didState: BearerDid,
+  pfiUri: string
+}
+
+export type SendCloseOptions = CloseData & {
+  exchangeId: string,
+  didState: BearerDid,
+  pfiUri: string
 }
 
 export async function sendRFQ(opts: SendRfqOptions) {
   const { 
     offeringId, 
-    payinSubunits, 
+    payinAmount, 
     payinMethod,
     payoutMethod,
-    credentials,
+    claims,
     didState,
-    pfiDid
+    pfiUri
   } = opts
   const message = Rfq.create({
     data: {
       offeringId,
-      payinSubunits,
+      payinAmount,
       payinMethod,
       payoutMethod,
-      claims: credentials
+      claims
     },
     metadata: {
-      from: didState.did,
-      to: pfiDid
+      from: didState.uri,
+      to: pfiUri
     }
   })
   await message.sign(didState)
@@ -48,49 +49,36 @@ export async function sendOrder(opts: SendOrderOptions) {
   const { 
     exchangeId,
     didState,
-    pfiDid
+    pfiUri
   } = opts
   const message = Order.create({
     metadata: {
       exchangeId: exchangeId,
-      from: didState.did,
-      to: pfiDid
+      from: didState.uri,
+      to: pfiUri
     }
   })
   await message.sign(didState)
   return await TbdexHttpClient.sendMessage({ message })
 }
 
-export function generateExchangeStatusValues(exchange) {
-  if (exchange.kind === 'close') {
-    if (exchange.data.reason.toLowerCase().includes('complete')) {
-      return 'completed'
-    } else if (exchange.data.reason.toLowerCase().includes('expired')) {
-      return 'expired'
-    } else {
-      return 'failed'
+export async function sendClose(opts: SendCloseOptions) {
+  const { 
+    exchangeId,
+    didState,
+    pfiUri,
+    reason
+  } = opts
+  const message = Close.create({
+    metadata: {
+      exchangeId: exchangeId,
+      from: didState.uri,
+      to: pfiUri
+    },
+    data: {
+      reason
     }
-  }
-  return exchange.kind
-}
-
-export function renderOrderStatus (exchange) {
-  const status = generateExchangeStatusValues(exchange)
-  switch (status) {
-    case 'rfq':
-      return 'Requested'
-    case 'quote':
-      return 'Quoted'
-    case 'order':
-    case 'orderstatus':
-      return 'Pending'
-    case 'completed':
-      return 'Completed'
-    case 'expired':
-      return 'Expired'
-    case 'failed':
-      return 'Failed'
-    default:
-      return 'Unknown status'
-  }
+  })
+  await message.sign(didState)
+  return await TbdexHttpClient.sendMessage({ message })
 }

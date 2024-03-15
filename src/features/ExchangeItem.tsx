@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import 'dayjs/locale/en'
 import 'react-toastify/dist/ReactToastify.css'
-import { type ClientExchange } from '../apiUtils'
+import { type ClientExchange } from '../api-utils'
 
 type ExchangeItemProps = {
   exchange: ClientExchange;
@@ -85,7 +85,7 @@ const getStatusString = (exchange) => {
     case 'completed':
       return `Sent ${money(exchange.payinAmount).format()} TBD`
     case 'expired':
-      return `Quote for ${money(exchange.payinAmount).format()} TBD expired or failed`
+      return `Quote for ${money(exchange.payinAmount).format()} TBD expired`
     case 'failed':
       return `Payment for ${money(exchange.payinAmount).format()} TBD failed`
     default:

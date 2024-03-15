@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { RfqContext } from './RfqContext'
-import { convertToBaseUnits, formatUnits, fromCents, getExchangeRate } from '../currency-utils'
+import { TBD, convertToBaseUnits, formatUnits, getExchangeRate } from '../currency-utils'
 
 type PayinAmountInputProps = {
   minPayinAmount: number;
@@ -16,15 +16,15 @@ type PayinAmountInputProps = {
 export function PayinAmountInput(props: PayinAmountInputProps) {
   const { offering } = useContext(RfqContext)
 
-  const payinCurrency = offering.payinCurrency.currencyCode
-  const payoutCurrency = offering.payoutCurrency.currencyCode
+  const payinCurrency = offering.data.payinCurrency.currencyCode
+  const payoutCurrency = offering.data.payoutCurrency.currencyCode
 
   const handlePayinAmountChange = (payinAmount: string) => {
     const formattedPayinAmount = formatUnits(payinAmount, 8)
   
     props.setCurrentPayinAmount(formattedPayinAmount)
     props.setCurrentPayoutAmount(
-      convertToBaseUnits(formattedPayinAmount, offering.payoutUnitsPerPayinUnit)
+      convertToBaseUnits(formattedPayinAmount, offering.data.payoutUnitsPerPayinUnit)
     )
     props.validateAmount(formattedPayinAmount)
   }
@@ -73,9 +73,9 @@ export function PayinAmountInput(props: PayinAmountInputProps) {
 
       <div className="grid grid-cols-2 gap-0.5 mt-5 rounded-md p-3 text-xs">
         <p className="text-left text-gray-400">Est. rate</p>
-        <p className="text-right w-[130%] ml-[-30%] text-gray-400">{getExchangeRate(offering.payoutUnitsPerPayinUnit, payinCurrency, payoutCurrency)}</p>
-        <p className="text-left text-gray-400 mt-2">Service fee</p>
-        <p className="text-right text-gray-400 mt-2">{offering.feeSubunits ? fromCents(offering.feeSubunits).format() : `0.00 ${payinCurrency}`}</p> 
+        <p className="text-right w-[130%] ml-[-30%] text-gray-400">{getExchangeRate(offering.data.payoutUnitsPerPayinUnit, payinCurrency, payoutCurrency)}</p>
+        <p className="text-left text-gray-400 mt-2">Total</p>
+        <p className="text-right text-gray-400 mt-2">{props.currentPayinAmount ? `${TBD(props.currentPayinAmount).format()} ${payinCurrency}` : `0.00 ${payinCurrency}`}</p> 
       </div>
     </div>
   )

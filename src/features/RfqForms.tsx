@@ -1,3 +1,4 @@
+import { Offering } from '@tbdex/http-client'
 import { RfqAddressPage } from './RfqAddressPage'
 import { PayinPage } from './RfqPayinPage'
 import { ReviewPage } from './RfqReviewPage'
@@ -15,7 +16,7 @@ export enum RfqFormIds {
  * @param {Function} handleBack - A function to handle the "Back" action.
  * @returns {Array} - An array of RFQ form objects, each containing a title and a component.
  */
-export const getRfqForms = (offering, handleNext, handleBack) => {
+export const getRfqForms = (offering: Offering, handleNext, handleBack) => {
 
   return [
     {
@@ -26,10 +27,10 @@ export const getRfqForms = (offering, handleNext, handleBack) => {
       id: RfqFormIds.Payin
     },
     {
-      title: 'What\'s your BTC address?',
+      title: 'Enter delivery details',
       component: (
         <RfqAddressPage
-          schema={offering.payoutMethods[0].requiredPaymentDetails}
+          schema={offering.data.payoutMethods[0].requiredPaymentDetails}
           onBack={handleBack}
           onNext={handleNext}
         />

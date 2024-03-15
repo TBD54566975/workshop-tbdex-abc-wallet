@@ -3,37 +3,41 @@ import { RfqContext } from './RfqContext'
 import { RfqFormIds, getRfqForms } from './RfqForms'
 import { BackButton } from '../common/BackButton'
 import { Panel } from '../common/Panel'
-import { createExchange } from '../apiUtils'
+import { createExchange } from '../api-utils'
 import '../styles/date.css'
-import { getSubunits } from '../currency-utils'
 import { useRecoilState } from 'recoil'
 import { credentialsState, didState } from '../state'
+import { ExchangesContext } from './ExchangesContext'
+import { pfiAllowlist } from '../workshop/allowlist'
 
 type RfqModalProps = {
   onClose: () => void;
 }
 export function RfqModal(props: RfqModalProps) {
+  const { setExchangesUpdated } = useContext(ExchangesContext)
   const [step, setStep] = useState(0)
   const { offering, payinAmount, paymentDetails } = useContext(RfqContext)
   const [credentials] = useRecoilState(credentialsState)
   const [did] = useRecoilState(didState)
 
-  const sendRfq = async () => { 
+  const submitRfq = async () => { 
     await createExchange({
+      pfiUri: offering.metadata.from,
       offeringId: offering.id, 
-      payinSubunits: getSubunits(payinAmount, offering.payinCurrency.currencyCode), 
-      payinMethod: { kind: offering.payinMethods[0].kind, paymentDetails: {} },
-      payoutMethod: { kind: offering.payoutMethods[0].kind, paymentDetails },
-      credentials,
+      payinAmount: Number(payinAmount).toFixed(2).toString(), 
+      payinMethod: { kind: offering.data.payinMethods[0].kind, paymentDetails: {} },
+      payoutMethod: { kind: offering.data.payoutMethods[0].kind, paymentDetails },
+      claims: credentials,
       didState: did
     })
+    setExchangesUpdated(true)
     props.onClose()
   }
 
   const handleNext = async () => {
     const currentFormId = forms[step].id
     if (currentFormId === RfqFormIds.Review) {
-      await sendRfq()
+      await submitRfq()
     } else {
       setStep((prevStep) => prevStep + 1)
     }
@@ -48,8 +52,13 @@ export function RfqModal(props: RfqModalProps) {
 
   return (
     <div className='relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all w-80 h-auto'>
-      <div className='flex items-center justify-center text-white'>
-        <h2 className='text-sm'>{offering.description}</h2>
+      <div className='text-white text-center'>
+        <h2 className='text-xs leading-6'>
+          { pfiAllowlist.find(pfi => pfi.pfiUri === offering.metadata.from).pfiName }
+        </h2>
+        <h3 className='text-sm font-medium'>
+          {offering.data.description}
+        </h3>
       </div>
       {step > 0 && (<BackButton onBack={handleBack}/>)}
 

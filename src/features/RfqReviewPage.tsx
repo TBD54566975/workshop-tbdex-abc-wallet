@@ -1,6 +1,7 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { RfqContext } from './RfqContext'
 import { formatUnits, money } from '../currency-utils'
+import { Spinner } from '../common/Spinner'
 
 type ReviewPageProps = {
   onSubmit: () => void;
@@ -15,12 +16,14 @@ export function ReviewPage(props: ReviewPageProps) {
     paymentDetails
   } = useContext(RfqContext)
 
-  const payinCurrency = offering?.payinCurrency.currencyCode
-  const payoutCurrency = offering?.payoutCurrency.currencyCode
+  const payinCurrency = offering?.data.payinCurrency.currencyCode
+  const payoutCurrency = offering?.data.payoutCurrency.currencyCode
   const payinUnits = money(payinAmount).format()
   const payoutUnits = formatUnits(payoutAmount, 8)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = () => {
+    setIsSubmitting(true)
     props.onSubmit()
   }
 
@@ -39,19 +42,22 @@ export function ReviewPage(props: ReviewPageProps) {
 
       <div className="mt-4 text-gray-400">
         <div className='text-xs font-small px-3'>
-          <p className='text-white'>{offering.payoutMethods[0].kind}</p>
+          <p className='text-white'>{offering.data.payoutMethods[0].kind}</p>
         </div>
         <p className='text-xs px-3 mt-1'>{paymentDetails.address}</p>
       </div>
 
       <div className="mx-8 fixed inset-x-0 bottom-6 z-10 flex justify-center">
-        <button
+        {isSubmitting ? 
+          <Spinner></Spinner>
+        : <button
           type="submit"
           className="rounded-2xl bg-indigo-500 w-full px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
           onClick={handleSubmit}
         >
           Request
         </button>
+        }
       </div>
     </>
   )

@@ -1,46 +1,82 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import dayjs from 'dayjs'
 import 'dayjs/locale/en' // Import the English locale for dayjs
 import { ExchangeItem } from './ExchangeItem'
 import { ExchangeModal } from './ExchangeModal'
 import { Spinner } from '../common/Spinner'
 import { ToastContainer } from 'react-toastify'
-import { fetchExchanges } from '../apiUtils'
+import { fetchExchanges } from '../api-utils'
 import 'react-toastify/dist/ReactToastify.css'
 import { useRecoilState } from 'recoil'
 import { didState } from '../state'
+import { BearerDid } from '@web5/dids'
+import { mockProviderDids } from '../mocks/mocks'
+import { Exchange } from '@tbdex/http-client'
+import { ExchangesContext } from './ExchangesContext'
+
+
+async function loadExchanges(did: BearerDid): Promise<Exchange[]> {
+  const fetchedExchanges = []
+  const pfis = [
+    mockProviderDids.pfi_0.uri,
+    mockProviderDids.pfi_1.uri,
+    mockProviderDids.pfi_2.uri,
+  ]
+  for (const pfiUri of pfis) {
+    try {
+      const exchanges = await fetchExchanges({ didState: did, pfiUri })
+      fetchedExchanges.push(exchanges)
+    } catch (e) {
+      console.error(e)
+      throw Error(e)
+    }
+  }
+  return fetchedExchanges.flatMap(exchanges => exchanges)
+}
 
 export function Exchanges() {
+  const { exchangesUpdated, setExchangesUpdated } = useContext(ExchangesContext)
   const [exchanges, setExchanges] = useState(undefined)
   const [selectedExchange, setSelectedExchange] = useState()
   const [did] = useRecoilState(didState)
   const dialogRef = useRef<HTMLDialogElement>(null)
   dayjs.locale('en')
 
+
   useEffect(() => {
     const init = async () => {
       try {
-        const fetchedExchanges = await fetchExchanges(did)
-        setExchanges(fetchedExchanges.reverse())
+        const exchanges = await loadExchanges(did)
+        setExchanges(exchanges)
       } catch (e) {
         setExchanges(null)
+        throw Error(e)
       }
     }
-    init()
-  }, [])
+    if (exchangesUpdated) {
+      init()
+      setExchangesUpdated(false)
+    }
+  }, [exchangesUpdated])
 
-  // [kw] todo this is a crude polling implementation
-  //      too much state changes going on, could be optimized
-  //      feel free to change the interval, 
-  //      which is currently set to 11 seconds
   useEffect(() => {
-  //   // TODO: make sure fetching newly created exchanges work now that backend is removed
-    const pollIntervalId = setInterval(async () => {
-      const fetchedExchanges = await fetchExchanges(did)
-      setExchanges(fetchedExchanges.reverse()) // todo: add sorting to push completed to bottom
-    }, 5000)
-    return () => clearInterval(pollIntervalId)
-  }, [])
+    const init = async () => {
+      try {
+        const exchanges = await loadExchanges(did)
+        setExchanges(exchanges)
+      } catch (e) {
+        setExchanges(null)
+        throw Error(e)
+      }
+    }
+    if (did) {
+      init()
+      const pollIntervalId = setInterval(async () => {
+        init()
+      }, 2000)
+      return () => clearInterval(pollIntervalId)
+    }
+  }, [did])
 
   const handleModalOpen = (exchange) => {
     setSelectedExchange(exchange)
@@ -87,7 +123,7 @@ export function Exchanges() {
         ) : (
           exchanges.map((exchange, index) => (
             <ExchangeItem key={index} exchange={exchange} handleStatusModalOpen={handleModalOpen}/>
-        )))}
+        ))).reverse()}
 
         <dialog ref={dialogRef} className='fixed bg-transparent' onClick={(e) => {
           if (e.target === dialogRef.current) {

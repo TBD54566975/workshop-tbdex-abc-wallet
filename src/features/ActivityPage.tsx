@@ -3,6 +3,7 @@ import { Panel } from '../common/Panel'
 import { Offerings } from './Offerings'
 import { Credentials } from './Credentials'
 import { Balance } from './Balance'
+import { ExchangesProvider } from './ExchangesContext'
 
 export function ActivityPage() {
   return (
@@ -18,17 +19,19 @@ export function ActivityPage() {
         <h2 className='mb-4'>Credentials</h2>
         <Credentials />
       </Panel>
-      <Panel width={'w-11/12'} height={'h-auto'}>
-        <h2 className='mb-4'>Transactions</h2>
-        <Exchanges/>
-      </Panel>
-      <Panel width={'w-11/12'} height={'h-auto'}>
-        <div className="flex flex-col items-center">
-          <h2 className='pt-4 text-center'>Offerings</h2>
-          <p className='pb-6 text-center text-xs text-gray-500'>What would you like to exchange TBDollars for?</p>
-        </div>
-        <Offerings />
-      </Panel>
+      <ExchangesProvider>
+        <Panel width={'w-11/12'} height={'h-auto'}>
+          <h2 className='mb-4'>Transactions</h2>
+          <Exchanges/>
+        </Panel>
+        <Panel width={'w-11/12'} height={'h-auto'}>
+          <div className="flex flex-col items-center">
+            <h2 className='pt-4 text-center'>Offerings</h2>
+            <p className='pb-6 text-center text-xs text-gray-500'>What would you like to exchange TBDollars for?</p>
+          </div>
+          <Offerings />
+        </Panel>
+      </ExchangesProvider>
     </>
   )
 }

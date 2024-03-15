@@ -1,3 +1,4 @@
+import { Offering } from '@tbdex/http-client'
 import React, { useState } from 'react'
 
 /**
@@ -8,10 +9,10 @@ import React, { useState } from 'react'
  * @returns {JSX.Element} - Returns the RfqProvider component.
  */
 export const RfqContext = React.createContext({ 
-  offering: undefined,
-  payinAmount: undefined,
+  offering: undefined as Offering,
+  payinAmount: undefined as string,
   setPayinAmount: undefined,
-  payoutAmount: undefined, 
+  payoutAmount: undefined as string, 
   setPayoutAmount: undefined, 
   paymentDetails: undefined,
   setPaymentDetails: undefined
