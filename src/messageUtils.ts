@@ -1,4 +1,4 @@
-import { Order, Rfq, RfqData, TbdexHttpClient } from '@tbdex/http-client'
+import { Close, Order, Rfq, RfqData, TbdexHttpClient } from '@tbdex/http-client'
 import { BearerDid } from '@web5/dids'
 
 export type SendRfqOptions = RfqData & {
@@ -12,7 +12,15 @@ export type SendOrderOptions = {
   pfiUri: string
 }
 
+export type SendCloseOptions = {
+  exchangeId: string,
+  didState: BearerDid,
+  pfiUri: string,
+  reason: string
+}
+
 export async function sendRFQ(opts: SendRfqOptions) {
+  return
   const { 
     offeringId, 
     payinAmount, 
@@ -40,6 +48,7 @@ export async function sendRFQ(opts: SendRfqOptions) {
 }
 
 export async function sendOrder(opts: SendOrderOptions) {
+  return
   const { 
     exchangeId,
     didState,
@@ -54,4 +63,27 @@ export async function sendOrder(opts: SendOrderOptions) {
   })
   await order.sign(didState)
   return await TbdexHttpClient.sendMessage({ message: order })
+}
+
+export async function sendClose(opts: SendCloseOptions) {
+  return
+  const { 
+    exchangeId,
+    didState,
+    pfiUri, 
+    reason 
+  } = opts
+  const close = Close.create({
+    metadata: { 
+      exchangeId: exchangeId,
+      from: didState.uri,
+      to: pfiUri,
+    },
+    data: {
+      reason
+    }
+  })
+  
+  await close.sign(didState)
+  return close
 }

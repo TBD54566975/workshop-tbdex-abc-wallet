@@ -1,6 +1,6 @@
 import { BearerDid } from '@web5/dids'
 import { Close, Offering, TbdexHttpClient } from '@tbdex/http-client'
-import { SendOrderOptions, SendRfqOptions, sendOrder, sendRFQ } from './messageUtils'
+import { SendCloseOptions, SendOrderOptions, SendRfqOptions, sendOrder, sendRFQ } from './messageUtils'
 import { Jwt, VcDataModel } from '@web5/credentials'
 
 export type ClientExchange = {
@@ -128,16 +128,15 @@ export function renderOrderStatus (exchange) {
   }
 }
 
-// 2. Once you choose an offering, create an exchange but submitting an rfq
 export async function createExchange(opts: SendRfqOptions) {
   return await sendRFQ({ ...opts })
 }
 
-// 3. At this point, the pfi has sent back a quote in response to your rfq
-export async function createOrder(opts: SendOrderOptions) {
+export async function addOrder(opts: SendOrderOptions) {
   return await sendOrder({ ...opts })
 }
 
-// 4. At this point, the pfi is responsible for all the rest of the bits of the exchange 
-// this will be order status
-// then close
+export async function addClose(opts: SendCloseOptions) {
+  return await sendOrder({ ...opts })
+}
+

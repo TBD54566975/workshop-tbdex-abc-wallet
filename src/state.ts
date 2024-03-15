@@ -43,7 +43,8 @@ export const credentialsState = atom<string[]>({
       const storedCredentials = localStorage.getItem('CREDENTIALS')
       if (storedCredentials) {
         setSelf(JSON.parse(storedCredentials))
-      } else {
+      } 
+      else {
         if (localStorage.getItem('DID')) {
           issueCredential({
             subjectDid: JSON.parse(localStorage.getItem('DID')).uri,
@@ -52,7 +53,7 @@ export const credentialsState = atom<string[]>({
             }
           }).then((credential) => {
             setSelf([credential])
-            localStorage.setItem('CREDENTIALS', JSON.stringify(credential))
+            localStorage.setItem('CREDENTIALS', JSON.stringify([credential]))
           })
         }
         // If no credential is found, issue one with the name "Anonymous User"

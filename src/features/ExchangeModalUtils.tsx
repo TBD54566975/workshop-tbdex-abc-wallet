@@ -1,7 +1,7 @@
 import { CheckCircleIcon, QuestionMarkCircleIcon, EllipsisHorizontalCircleIcon, XCircleIcon } from '@heroicons/react/20/solid'
 import { TBD } from '../currency-utils'
 import { useContext, useState } from 'react'
-import { createOrder } from '../apiUtils'
+import { addClose, addOrder } from '../apiUtils'
 import { useRecoilState } from 'recoil'
 import { balanceState } from '../state'
 import { ExchangesContext } from './ExchangesContext'
@@ -16,7 +16,20 @@ export const renderActionButtons = (amount, exchangeId, onClose, didState, pfiUr
     if (action === 'accept') {
       setIsUpdating(true)
       try {
-        await createOrder({ exchangeId, didState, pfiUri })
+        await addOrder({ exchangeId, didState, pfiUri })
+        setAccountBalance(accountBalance - Number(amount))
+        setExchangesUpdated(true)
+      } catch (e) {
+        setIsUpdating(false)
+        console.error(e)
+        return
+      }
+      setIsUpdating(false)
+    }
+    if (action === 'reject') {
+      setIsUpdating(true)
+      try {
+        await addClose({ exchangeId, didState, pfiUri, reason: 'user cancelled' })
         setAccountBalance(accountBalance - Number(amount))
         setExchangesUpdated(true)
       } catch (e) {

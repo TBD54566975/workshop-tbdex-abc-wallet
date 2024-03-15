@@ -72,7 +72,7 @@ export function Exchanges() {
     if (did) {
       init()
       const pollIntervalId = setInterval(async () => {
-        init()// todo: add sorting to push completed to bottom
+        init()
       }, 2000)
       return () => clearInterval(pollIntervalId)
     }
