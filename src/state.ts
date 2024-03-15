@@ -1,6 +1,6 @@
 import { atom, DefaultValue } from 'recoil'
 import { DidDht, BearerDid } from '@web5/dids'
-import { issueCredential } from './mocks/mocks'
+import { getCredentialFromIssuer } from './mocks/mocks'
 
 // Atom to hold the DID
 export const didState = atom<BearerDid | null>({
@@ -46,7 +46,7 @@ export const credentialsState = atom<string[]>({
       } 
       else {
         if (localStorage.getItem('DID')) {
-          issueCredential({
+          getCredentialFromIssuer({
             subjectDid: JSON.parse(localStorage.getItem('DID')).uri,
             data: {
               countryCode: 'Earth'
