@@ -1,8 +1,8 @@
 import { didState, credentialsState } from '../state'
 import { useRecoilState } from 'recoil'
 import { FaAddressCard } from 'react-icons/fa'
-import { issueCredential } from '../mocks/mocks'
 import { useRef } from 'react'
+import { requestCredentialFromIssuer } from '../api-utils'
 
 
 export function GetCredentialPage() {
@@ -14,12 +14,7 @@ export function GetCredentialPage() {
   const getCredentials = async (e) => {
     e.preventDefault()
     const formData = new FormData(formRef.current)
-    const credential = await issueCredential({
-      subjectDid: did.uri,
-      data: {
-        countryCode: formData.get('countryCode')
-      }
-    })
+    const credential = await requestCredentialFromIssuer(did.uri, formData.get('countryCode'))
     setCredentials([...credentials, credential])
   }
 

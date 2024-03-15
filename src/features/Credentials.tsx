@@ -1,5 +1,5 @@
 import { useRecoilState } from 'recoil'
-import { renderCredential } from '../apiUtils'
+import { renderCredential } from '../api-utils'
 import { credentialsState } from '../state'
 
 export function Credentials() {

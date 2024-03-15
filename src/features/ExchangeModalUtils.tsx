@@ -1,7 +1,7 @@
 import { CheckCircleIcon, QuestionMarkCircleIcon, EllipsisHorizontalCircleIcon, XCircleIcon } from '@heroicons/react/20/solid'
 import { TBD } from '../currency-utils'
 import { useContext, useState } from 'react'
-import { addClose, addOrder } from '../apiUtils'
+import { addClose, addOrder } from '../api-utils'
 import { useRecoilState } from 'recoil'
 import { balanceState } from '../state'
 import { ExchangesContext } from './ExchangesContext'

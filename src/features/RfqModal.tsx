@@ -3,12 +3,12 @@ import { RfqContext } from './RfqContext'
 import { RfqFormIds, getRfqForms } from './RfqForms'
 import { BackButton } from '../common/BackButton'
 import { Panel } from '../common/Panel'
-import { createExchange } from '../apiUtils'
+import { createExchange } from '../api-utils'
 import '../styles/date.css'
 import { useRecoilState } from 'recoil'
 import { credentialsState, didState } from '../state'
 import { ExchangesContext } from './ExchangesContext'
-import { pfiAllowlist } from '../allowlist'
+import { pfiAllowlist } from '../workshop/allowlist'
 
 type RfqModalProps = {
   onClose: () => void;

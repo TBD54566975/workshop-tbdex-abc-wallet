@@ -3,10 +3,10 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { renderActionButtons, renderStatusInfo } from './ExchangeModalUtils'
 import { money, BTC } from '../currency-utils'
-import { type ClientExchange } from '../apiUtils'
+import { type ClientExchange } from '../api-utils'
 import { useRecoilState } from 'recoil'
 import { didState } from '../state'
-import { pfiAllowlist } from '../allowlist'
+import { pfiAllowlist } from '../workshop/allowlist'
 
 type ExchangeModalProps = {
   exchange: ClientExchange

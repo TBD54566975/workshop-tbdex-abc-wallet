@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import dayjs from 'dayjs'
 import 'dayjs/locale/en'
 import 'react-toastify/dist/ReactToastify.css'
-import { type ClientExchange } from '../apiUtils'
+import { type ClientExchange } from '../api-utils'
 
 type ExchangeItemProps = {
   exchange: ClientExchange;

@@ -1,7 +1,8 @@
 import { BearerDid } from '@web5/dids'
 import { Close, Offering, TbdexHttpClient } from '@tbdex/http-client'
-import { SendCloseOptions, SendOrderOptions, SendRfqOptions, sendOrder, sendRFQ } from './messageUtils'
+import { SendCloseOptions, SendOrderOptions, SendRfqOptions, sendOrder, sendRFQ } from './workshop/messageUtils'
 import { Jwt, VcDataModel } from '@web5/credentials'
+import { getCredentialFromIssuer } from './mocks/mocks'
 
 export type ClientExchange = {
   id: string;
@@ -17,7 +18,18 @@ export type ClientExchange = {
   pfiUri: string
 }
 
-// 1a. Render the credential you obtained from the issuer.
+// 1. Set up credential flow by requesting credential from an issuer 
+export async function requestCredentialFromIssuer(didUri, countryCode) {
+  const credential = await getCredentialFromIssuer({
+    subjectDid: didUri,
+    data: {
+      countryCode
+    }
+  })
+  return credential
+}  
+
+// 2. Render the credential you obtained from the issuer.
 export function renderCredential(credentialJwt: string) {
   const vc: Partial<VcDataModel> = Jwt.parse({ jwt: credentialJwt }).decoded.payload['vc']
   return {
@@ -27,6 +39,19 @@ export function renderCredential(credentialJwt: string) {
   }
 }
 
+// 3. Fetch offerings from a given PFI to choose from.
+export async function fetchOfferings(pfiUri: string) {
+  try {
+    const offerings = await TbdexHttpClient.getOfferings({
+      pfiDid: pfiUri
+    })
+    return offerings
+  } catch (e) {
+    throw new Error(`Error fetching offerings: ${e}`)
+  }
+}
+
+// 4. Filter offerings based on which credentials the user has to satisfy the requirements.
 export function isMatchingOffering(offering: Offering, credentials: string[]) {
   const vc: Partial<VcDataModel> = Jwt.parse({ jwt: credentials[0] }).decoded.payload['vc']
   let matches = 0
@@ -46,8 +71,7 @@ export function isMatchingOffering(offering: Offering, credentials: string[]) {
   return matches == Object.keys(offering.data.requiredClaims.input_descriptors[0].constraints.fields).length
 }
 
-
-// 1b. Fetch current exchanges in progress
+// 5. Fetch exchanges between a given user and a given PFI
 export async function fetchExchanges(params: {didState: BearerDid, pfiUri: string }) {
   const { didState, pfiUri } = params
   try {
@@ -79,18 +103,6 @@ export async function fetchExchanges(params: {didState: BearerDid, pfiUri: strin
     return mappedExchanges
   } catch (e) {
     throw new Error(`Error fetching exchanges: ${e}`)
-  }
-}
-
-// 1c. Fetch offerings to choose from
-export async function fetchOfferings(pfiUri: string) {
-  try {
-    const offerings = await TbdexHttpClient.getOfferings({
-      pfiDid: pfiUri
-    })
-    return offerings
-  } catch (e) {
-    throw new Error(`Error fetching offerings: ${e}`)
   }
 }
 

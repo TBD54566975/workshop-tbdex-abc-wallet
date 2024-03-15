@@ -41,7 +41,7 @@ export const mockProviderDids = {
   }, 
 }
 
-export async function issueCredential(params: { subjectDid: string, data: Record<string, unknown> }) {
+export async function getCredentialFromIssuer(params: { subjectDid: string, data: Record<string, unknown> }) {
   const { subjectDid, data } = params
   const issuer = await mockProviderDids.issuer.bearerDid
 
@@ -129,6 +129,7 @@ export async function createClose(params: { pfiDid: BearerDid, lastMessage: Mess
   return close
 }
 
+/* Mock Offerings */ 
 export const offeringDataTBDollarsToBitcoin_0: OfferingData = {
   description: 'Exchange your TBDollars for Bitcoin',
   payoutUnitsPerPayinUnit: '0.000027',
