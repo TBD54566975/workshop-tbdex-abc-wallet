@@ -7,6 +7,7 @@
 To run the project in development mode, run the following:
 
 ```bash
+npm install
 npm run dev
 ```
 This command will start the development server, and you can access the project at `http://localhost:8081` in your web browser (or whatever endpoint is defined in vite.config.ts).
