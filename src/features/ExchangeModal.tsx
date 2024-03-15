@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { renderActionButtons, renderStatusInfo } from './ExchangeModalUtils'
-import { money, BTC } from '../currency-utils'
+import { money } from '../currency-utils'
 import { type ClientExchange } from '../api-utils'
 import { useRecoilState } from 'recoil'
 import { didState } from '../state'
@@ -16,7 +16,7 @@ type ExchangeModalProps = {
 export function ExchangeModal(props: ExchangeModalProps) {
   dayjs.extend(relativeTime)
   const [did] = useRecoilState(didState)
-  
+
   return (
     <div className='relative transform overflow-hidden rounded-lg bg-neutral-800 pb-4 pt-5 text-left shadow-xl transition-all w-80 h-auto'>
       <button className="absolute top-5 right-5 text-white hover:text-gray-300 focus:outline-none" onClick={() => { props.onClose(true) }}>
@@ -27,7 +27,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
           $
         </div>
         <h2 className='text-xs text-gray-200'>
-          { pfiAllowlist.find(pfi => pfi.pfiUri === props.exchange.pfiUri).pfiName }
+          { pfiAllowlist.find(pfi => pfi.pfiUri === props.exchange.pfiDid).pfiName }
         </h2>
         {props.exchange.payinCurrency && props.exchange.payoutCurrency && 
           <p className="text-xs text-gray-500 mt-1">Exchange from {props.exchange.payinCurrency} to {props.exchange.payoutCurrency}</p>
@@ -42,7 +42,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
         <div className="w-full mt-6 px-5 pt-3 text-xs text-gray-400">
           <div className="flex mb-2">
             <div className="w-1/2 text-left text-gray-500">Amount</div>
-            <div className="w-1/2 text-right">{(BTC(props.exchange.payoutAmount).format())} {props.exchange.payoutCurrency}</div>
+            <div className="w-1/2 text-right">{(money(props.exchange.payoutAmount).format())} {props.exchange.payoutCurrency}</div>
           </div>
           <div className="flex mb-2">
             <div className="w-1/2 text-left text-gray-500">To</div>
@@ -61,7 +61,7 @@ export function ExchangeModal(props: ExchangeModalProps) {
         </div>
       </div>
 
-      {props.exchange.status === 'quote' && renderActionButtons(props.exchange.payinAmount, props.exchange.id, props.onClose, did, props.exchange.pfiUri )}
+      {props.exchange.status === 'quote' && renderActionButtons(props.exchange.payinAmount, props.exchange.id, props.onClose, did, props.exchange.pfiDid )}
     </div>
   )
 }

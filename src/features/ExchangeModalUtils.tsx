@@ -111,6 +111,8 @@ const getStatusText = (status) => {
       return 'Completed'
     case 'expired':
       return 'Expired'
+    case 'cancelled':
+      return 'Cancelled'
     case 'failed':
       return 'Failed'
     default:

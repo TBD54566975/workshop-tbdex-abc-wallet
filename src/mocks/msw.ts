@@ -13,7 +13,6 @@ import {
   offeringDataTBDollarsToPlants, 
   offeringDataTBDollarsToSocks } from './mocks'
 import { Close, Exchange, Message, Offering, Order, OrderStatus, Quote, Rfq } from '@tbdex/http-client'
-import { convertToBaseUnits } from '../currency-utils'
 
 const request_0 = indexedDB.open('pfi_0')
 const request_1 = indexedDB.open('pfi_1')
@@ -254,7 +253,7 @@ function createHandlers(endpoint: string, request: IDBOpenDBRequest): HttpHandle
           const quote = await createQuote( {
             pfiDid: await mockProviderDids.pfi_0.bearerDid,
             rfq: rfq as Rfq,
-            payoutAmount: convertToBaseUnits((rfq as Rfq).data.payinAmount, offering.data.payoutUnitsPerPayinUnit )
+            offering: offering as Offering
           })
     
           store.get(quote.metadata.exchangeId).onsuccess = (event) => {
@@ -270,7 +269,7 @@ function createHandlers(endpoint: string, request: IDBOpenDBRequest): HttpHandle
       return HttpResponse.json({}, { status: 200 }) // return success 
     }),
     http.post(endpoint + '/exchanges/*/order', async ({request: req}) => {
-      // add order, then add orderstatus, then return 200
+      // add order, then return 200
       const order = await req.json() as  Order
       if(request.readyState === 'done') {
         const store = request.result
@@ -281,6 +280,24 @@ function createHandlers(endpoint: string, request: IDBOpenDBRequest): HttpHandle
           const result = event.target['result']
           result.push(order)
           store.put(result, order.metadata.exchangeId)
+        }
+      }  else {
+        console.error('db not ready')
+      }
+      return HttpResponse.json({}, { status: 200 }) // return success 
+    }),
+    http.post(endpoint + '/exchanges/*/close', async ({request: req}) => {
+      // add close, then return 200
+      const close = await req.json() as  Close
+      if(request.readyState === 'done') {
+        const store = request.result
+        .transaction('exchanges', 'readwrite')
+        .objectStore('exchanges')
+    
+        store.get(close.metadata.exchangeId).onsuccess = (event) => {
+          const result = event.target['result']
+          result.push(close)
+          store.put(result, close.metadata.exchangeId)
         }
       }  else {
         console.error('db not ready')

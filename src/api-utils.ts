@@ -1,6 +1,6 @@
 import { BearerDid } from '@web5/dids'
 import { Close, Offering, TbdexHttpClient } from '@tbdex/http-client'
-import { SendCloseOptions, SendOrderOptions, SendRfqOptions, sendOrder, sendRFQ } from './workshop/messageUtils'
+import { SendCloseOptions, SendOrderOptions, SendRfqOptions, sendOrder, sendRFQ, sendClose } from './workshop/messageUtils'
 import { Jwt, VcDataModel } from '@web5/credentials'
 import { getCredentialFromIssuer } from './mocks/mocks'
 
@@ -15,7 +15,7 @@ export type ClientExchange = {
   expirationTime?: string,
   from: string,
   to: string,
-  pfiUri: string
+  pfiDid: string
 }
 
 // 1. Set up credential flow by requesting credential from an issuer 
@@ -112,6 +112,8 @@ export function generateExchangeStatusValues(exchangeMessage) {
       return 'completed'
     } else if (exchangeMessage.data.reason.toLowerCase().includes('expired')) {
       return 'expired'
+    } else if (exchangeMessage.data.reason.toLowerCase().includes('cancelled')) {
+      return 'cancelled'
     } else {
       return 'failed'
     }
@@ -133,6 +135,8 @@ export function renderOrderStatus (exchange) {
       return 'Completed'
     case 'expired':
       return 'Expired'
+    case 'cancelled':
+      return 'Cancelled'
     case 'failed':
       return 'Failed'
     default:
@@ -149,6 +153,6 @@ export async function addOrder(opts: SendOrderOptions) {
 }
 
 export async function addClose(opts: SendCloseOptions) {
-  return await sendOrder({ ...opts })
+  return await sendClose({ ...opts })
 }
 

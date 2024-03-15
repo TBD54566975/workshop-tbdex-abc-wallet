@@ -5,6 +5,7 @@ import issuer from './issuer.json' assert { type: 'json' }
 import pfi_0 from './pfi_0.json' assert { type: 'json' }
 import pfi_1 from './pfi_1.json' assert { type: 'json' }
 import pfi_2 from './pfi_2.json' assert { type: 'json' }
+import { convertToBaseUnits } from '../currency-utils'
 
 export const mockProviderDids = {
   issuer: {
@@ -70,8 +71,8 @@ export async function createOffering(params: { pfiDid: BearerDid, offeringData }
   return offering
 }
 
-export async function createQuote(params: { pfiDid: BearerDid, rfq: Rfq, payoutAmount: string }) {
-  const { pfiDid, rfq, payoutAmount } = params
+export async function createQuote(params: { pfiDid: BearerDid, rfq: Rfq, offering: Offering }) {
+  const { pfiDid, rfq, offering } = params
   const quote = Quote.create({
     metadata: { 
       from: pfiDid.uri,
@@ -81,12 +82,12 @@ export async function createQuote(params: { pfiDid: BearerDid, rfq: Rfq, payoutA
     data: {
       expiresAt: new Date((Date.now() + 3_600_000)).toISOString(), // expires in 1 hour
       payin: {
-        currencyCode: 'TBD',
+        currencyCode: offering.data.payinCurrency.currencyCode,
         amount: rfq.data.payinAmount
       },
       payout: {
-        currencyCode: 'BTC',
-        amount: payoutAmount
+        currencyCode: offering.data.payoutCurrency.currencyCode,
+        amount: convertToBaseUnits(rfq.data.payinAmount, offering.data.payoutUnitsPerPayinUnit )
       }
     }
   })
